@@ -3027,6 +3027,16 @@
 		)
 		(uuid "e1ad83ba-1476-42f8-80ac-1be4dabd524e")
 	)
+	(text "5 mA to drive ADC load when stepping 5V -> 3V3?"
+		(exclude_from_sim no)
+		(at 217.678 46.99 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+		)
+		(uuid "f8199cb2-2da7-40d6-b0cf-40ee8e75160e")
+	)
 	(junction
 		(at 208.28 74.93)
 		(diameter 0)

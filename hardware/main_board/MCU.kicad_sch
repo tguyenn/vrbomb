@@ -4283,7 +4283,7 @@
 				(justify left)
 			)
 		)
-		(property "Value" "LED"
+		(property "Value" "PWR_LED"
 			(at 45.72 112.0774 0)
 			(effects
 				(font
@@ -5799,10 +5799,9 @@
 		(in_bom yes)
 		(on_board yes)
 		(dnp no)
-		(fields_autoplaced yes)
 		(uuid "e02cb856-7948-45c1-bc9d-a6fc9e161ab0")
 		(property "Reference" "D1"
-			(at 36.83 109.5374 0)
+			(at 21.844 109.474 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -5810,8 +5809,8 @@
 				(justify left)
 			)
 		)
-		(property "Value" "LED"
-			(at 36.83 112.0774 0)
+		(property "Value" "RUN_LED"
+			(at 21.844 112.014 0)
 			(effects
 				(font
 					(size 1.27 1.27)
