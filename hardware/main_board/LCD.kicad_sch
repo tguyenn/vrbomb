@@ -678,8 +678,20 @@
 		)
 	)
 	(rectangle
-		(start 46.99 17.78)
-		(end 115.57 80.01)
+		(start 15.24 13.97)
+		(end 44.45 41.91)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(fill
+			(type none)
+		)
+		(uuid b00ec1ca-4be7-4fd3-840e-f2ed38b40a72)
+	)
+	(rectangle
+		(start 15.24 43.18)
+		(end 83.82 105.41)
 		(stroke
 			(width 0)
 			(type default)
@@ -691,7 +703,7 @@
 	)
 	(text "LCD"
 		(exclude_from_sim no)
-		(at 49.276 20.066 0)
+		(at 17.78 45.466 0)
 		(effects
 			(font
 				(size 1.27 1.27)
@@ -699,14 +711,24 @@
 		)
 		(uuid "30eb7fc3-1c11-4902-a22a-18606b817703")
 	)
+	(text "Hierarchical Labels"
+		(exclude_from_sim no)
+		(at 25.4 15.24 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+		)
+		(uuid "b49123a1-e905-4d49-8e4d-e067d1d20b94")
+	)
 	(junction
-		(at 107.95 54.61)
+		(at 76.2 80.01)
 		(diameter 0)
 		(color 0 0 0 0)
 		(uuid "58f67ce0-23e4-46c0-aa8c-2178e4a9d37d")
 	)
 	(junction
-		(at 107.95 29.21)
+		(at 76.2 54.61)
 		(diameter 0)
 		(color 0 0 0 0)
 		(uuid "e5dc00ff-8046-4fae-85c9-915aaa756820")
@@ -740,7 +762,7 @@
 	)
 	(wire
 		(pts
-			(xy 107.95 50.8) (xy 107.95 54.61)
+			(xy 76.2 76.2) (xy 76.2 80.01)
 		)
 		(stroke
 			(width 0)
@@ -810,7 +832,7 @@
 	)
 	(wire
 		(pts
-			(xy 53.34 52.07) (xy 67.31 52.07)
+			(xy 21.59 77.47) (xy 35.56 77.47)
 		)
 		(stroke
 			(width 0)
@@ -840,7 +862,7 @@
 	)
 	(wire
 		(pts
-			(xy 107.95 29.21) (xy 107.95 33.02)
+			(xy 76.2 54.61) (xy 76.2 58.42)
 		)
 		(stroke
 			(width 0)
@@ -869,7 +891,7 @@
 		(uuid "f8aacf0c-938f-413b-b6d8-fbfcdd5ac66a")
 	)
 	(label "SPI1.MOSI"
-		(at 67.31 44.45 180)
+		(at 35.56 69.85 180)
 		(effects
 			(font
 				(size 1.27 1.27)
@@ -889,7 +911,7 @@
 		(uuid "16d977a6-01d9-4dae-a296-92303f85cff1")
 	)
 	(label "LCD_DC"
-		(at 67.31 48.26 180)
+		(at 35.56 73.66 180)
 		(effects
 			(font
 				(size 1.27 1.27)
@@ -899,7 +921,7 @@
 		(uuid "2d4241c1-67f3-4767-b082-984114e26215")
 	)
 	(label "CS_{SD}"
-		(at 67.31 60.96 180)
+		(at 35.56 86.36 180)
 		(effects
 			(font
 				(size 1.27 1.27)
@@ -909,7 +931,7 @@
 		(uuid "3c8463da-1fc5-44d7-bc8b-a8a186145570")
 	)
 	(label "CS_{LCD}"
-		(at 67.31 36.83 180)
+		(at 35.56 62.23 180)
 		(effects
 			(font
 				(size 1.27 1.27)
@@ -949,7 +971,7 @@
 		(uuid "86e2786a-37ce-44da-8532-2e9ddb903b62")
 	)
 	(label "SPI1.SCK"
-		(at 67.31 40.64 180)
+		(at 35.56 66.04 180)
 		(effects
 			(font
 				(size 1.27 1.27)
@@ -959,7 +981,7 @@
 		(uuid "b9a7984e-56e7-48c9-b7bc-2c4d5c3dd6ff")
 	)
 	(label "SPI1.MOSI"
-		(at 67.31 64.77 180)
+		(at 35.56 90.17 180)
 		(effects
 			(font
 				(size 1.27 1.27)
@@ -969,7 +991,7 @@
 		(uuid "be4b8cf4-0597-4664-a473-d084aa2886b2")
 	)
 	(label "SPI1.MISO"
-		(at 67.31 68.58 180)
+		(at 35.56 93.98 180)
 		(effects
 			(font
 				(size 1.27 1.27)
@@ -989,7 +1011,7 @@
 		(uuid "e8f61658-426e-4845-a03c-b72075288431")
 	)
 	(label "SPI1.SCK"
-		(at 67.31 72.39 180)
+		(at 35.56 97.79 180)
 		(effects
 			(font
 				(size 1.27 1.27)
@@ -1054,7 +1076,7 @@
 	)
 	(symbol
 		(lib_id "power:+3V3")
-		(at 53.34 52.07 0)
+		(at 21.59 77.47 0)
 		(unit 1)
 		(exclude_from_sim no)
 		(in_bom yes)
@@ -1062,8 +1084,8 @@
 		(dnp no)
 		(fields_autoplaced yes)
 		(uuid "39ef167d-da2a-4be1-a7a5-8747f2b98df1")
-		(property "Reference" "#PWR02"
-			(at 53.34 55.88 0)
+		(property "Reference" "#PWR014"
+			(at 21.59 81.28 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -1072,7 +1094,7 @@
 			)
 		)
 		(property "Value" "+3V3"
-			(at 53.34 46.99 0)
+			(at 21.59 72.39 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -1080,7 +1102,7 @@
 			)
 		)
 		(property "Footprint" ""
-			(at 53.34 52.07 0)
+			(at 21.59 77.47 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -1089,7 +1111,7 @@
 			)
 		)
 		(property "Datasheet" ""
-			(at 53.34 52.07 0)
+			(at 21.59 77.47 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -1098,7 +1120,7 @@
 			)
 		)
 		(property "Description" "Power symbol creates a global label with name \"+3V3\""
-			(at 53.34 52.07 0)
+			(at 21.59 77.47 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -1112,7 +1134,7 @@
 		(instances
 			(project ""
 				(path "/5332464e-0c3a-49d2-8fb5-731d0e42ee15/f60196d5-a61c-416f-993a-faa1a0858c5e"
-					(reference "#PWR02")
+					(reference "#PWR014")
 					(unit 1)
 				)
 			)
@@ -1120,7 +1142,7 @@
 	)
 	(symbol
 		(lib_id "power:+3V3")
-		(at 107.95 29.21 0)
+		(at 76.2 54.61 0)
 		(unit 1)
 		(exclude_from_sim no)
 		(in_bom yes)
@@ -1128,8 +1150,8 @@
 		(dnp no)
 		(fields_autoplaced yes)
 		(uuid "41abf34e-f426-4d94-8669-61e6f55b8e57")
-		(property "Reference" "#PWR03"
-			(at 107.95 33.02 0)
+		(property "Reference" "#PWR013"
+			(at 76.2 58.42 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -1138,7 +1160,7 @@
 			)
 		)
 		(property "Value" "+3V3"
-			(at 107.95 24.13 0)
+			(at 76.2 49.53 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -1146,7 +1168,7 @@
 			)
 		)
 		(property "Footprint" ""
-			(at 107.95 29.21 0)
+			(at 76.2 54.61 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -1155,7 +1177,7 @@
 			)
 		)
 		(property "Datasheet" ""
-			(at 107.95 29.21 0)
+			(at 76.2 54.61 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -1164,7 +1186,7 @@
 			)
 		)
 		(property "Description" "Power symbol creates a global label with name \"+3V3\""
-			(at 107.95 29.21 0)
+			(at 76.2 54.61 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -1178,7 +1200,7 @@
 		(instances
 			(project "main_board"
 				(path "/5332464e-0c3a-49d2-8fb5-731d0e42ee15/f60196d5-a61c-416f-993a-faa1a0858c5e"
-					(reference "#PWR03")
+					(reference "#PWR013")
 					(unit 1)
 				)
 			)
@@ -1186,7 +1208,7 @@
 	)
 	(symbol
 		(lib_id "ECE445L:HiLetGo_ST7735R")
-		(at 87.63 41.91 0)
+		(at 55.88 67.31 0)
 		(unit 1)
 		(exclude_from_sim no)
 		(in_bom yes)
@@ -1194,8 +1216,8 @@
 		(dnp no)
 		(fields_autoplaced yes)
 		(uuid "d1c6be54-017e-4aa2-87b3-215982233e58")
-		(property "Reference" "U2"
-			(at 87.63 21.59 0)
+		(property "Reference" "U1"
+			(at 55.88 46.99 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -1203,7 +1225,7 @@
 			)
 		)
 		(property "Value" "HiLetGo_ST7735R"
-			(at 87.63 24.13 0)
+			(at 55.88 49.53 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -1211,7 +1233,7 @@
 			)
 		)
 		(property "Footprint" "445L:hiletgo_st7735r"
-			(at 82.55 19.05 0)
+			(at 50.8 44.45 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -1221,7 +1243,7 @@
 			)
 		)
 		(property "Datasheet" "https://users.ece.utexas.edu/~valvano/mspm0/1-8-tft-display.pdf"
-			(at 86.36 22.86 0)
+			(at 54.61 48.26 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -1230,7 +1252,7 @@
 			)
 		)
 		(property "Description" "http://hiletgo.com/ProductDetail/2157911.html"
-			(at 87.63 41.91 0)
+			(at 55.88 67.31 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -1239,7 +1261,7 @@
 			)
 		)
 		(property "Distributor" "Amazon"
-			(at 87.63 20.32 0)
+			(at 55.88 45.72 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -1248,7 +1270,7 @@
 			)
 		)
 		(property "Manufacturer" "HiLetGo"
-			(at 72.39 20.32 0)
+			(at 40.64 45.72 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -1257,7 +1279,7 @@
 			)
 		)
 		(property "P/N" "https://www.amazon.com/s?k=hiletgo+ST7735R"
-			(at 86.36 25.4 0)
+			(at 54.61 50.8 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -1266,7 +1288,7 @@
 			)
 		)
 		(property "LCSC Part #" ""
-			(at 87.63 41.91 0)
+			(at 55.88 67.31 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -1275,7 +1297,7 @@
 			)
 		)
 		(property "Cost" "9.95"
-			(at 99.06 19.05 0)
+			(at 67.31 44.45 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -1334,7 +1356,7 @@
 		(instances
 			(project "main_board"
 				(path "/5332464e-0c3a-49d2-8fb5-731d0e42ee15/f60196d5-a61c-416f-993a-faa1a0858c5e"
-					(reference "U2")
+					(reference "U1")
 					(unit 1)
 				)
 			)
@@ -1342,7 +1364,7 @@
 	)
 	(symbol
 		(lib_id "power:GND")
-		(at 107.95 54.61 0)
+		(at 76.2 80.01 0)
 		(unit 1)
 		(exclude_from_sim no)
 		(in_bom yes)
@@ -1350,8 +1372,8 @@
 		(dnp no)
 		(fields_autoplaced yes)
 		(uuid "f5fed8f4-3851-4367-b8ef-28feec64a34e")
-		(property "Reference" "#PWR04"
-			(at 107.95 60.96 0)
+		(property "Reference" "#PWR015"
+			(at 76.2 86.36 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -1360,7 +1382,7 @@
 			)
 		)
 		(property "Value" "GND"
-			(at 107.95 59.69 0)
+			(at 76.2 85.09 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -1368,7 +1390,7 @@
 			)
 		)
 		(property "Footprint" ""
-			(at 107.95 54.61 0)
+			(at 76.2 80.01 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -1377,7 +1399,7 @@
 			)
 		)
 		(property "Datasheet" ""
-			(at 107.95 54.61 0)
+			(at 76.2 80.01 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -1386,7 +1408,7 @@
 			)
 		)
 		(property "Description" "Power symbol creates a global label with name \"GND\" , ground"
-			(at 107.95 54.61 0)
+			(at 76.2 80.01 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -1400,7 +1422,7 @@
 		(instances
 			(project ""
 				(path "/5332464e-0c3a-49d2-8fb5-731d0e42ee15/f60196d5-a61c-416f-993a-faa1a0858c5e"
-					(reference "#PWR04")
+					(reference "#PWR015")
 					(unit 1)
 				)
 			)

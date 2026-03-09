@@ -5,22 +5,6 @@
 	(uuid "5332464e-0c3a-49d2-8fb5-731d0e42ee15")
 	(paper "A4")
 	(lib_symbols)
-	(text "todo: current budgeting\ntodo: money budgeting"
-		(exclude_from_sim no)
-		(at 53.34 83.82 0)
-		(effects
-			(font
-				(size 1.27 1.27)
-			)
-		)
-		(uuid "69a27da3-e81c-44a7-9752-d3544a269564")
-	)
-	(junction
-		(at 146.05 116.84)
-		(diameter 0)
-		(color 0 0 0 0)
-		(uuid "a2c87e6a-a05e-4c14-9f6b-53656c426c57")
-	)
 	(bus
 		(pts
 			(xy 143.51 121.92) (xy 138.43 121.92)
@@ -143,7 +127,7 @@
 	)
 	(wire
 		(pts
-			(xy 138.43 85.09) (xy 158.75 85.09)
+			(xy 138.43 86.36) (xy 158.75 86.36)
 		)
 		(stroke
 			(width 0)
@@ -233,7 +217,7 @@
 	)
 	(wire
 		(pts
-			(xy 138.43 82.55) (xy 158.75 82.55)
+			(xy 138.43 83.82) (xy 158.75 83.82)
 		)
 		(stroke
 			(width 0)
@@ -281,6 +265,16 @@
 		)
 		(uuid "8724d758-cc27-42ad-9681-67e34f3abc5a")
 	)
+	(bus
+		(pts
+			(xy 146.05 77.47) (xy 146.05 58.42)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "8a479933-f668-449f-8f8b-8e2df5e29934")
+	)
 	(wire
 		(pts
 			(xy 96.52 95.25) (xy 96.52 125.73)
@@ -303,13 +297,13 @@
 	)
 	(bus
 		(pts
-			(xy 146.05 116.84) (xy 146.05 124.46)
+			(xy 138.43 80.01) (xy 148.59 80.01)
 		)
 		(stroke
 			(width 0)
 			(type default)
 		)
-		(uuid "97b95107-853f-44eb-9741-a8f444389543")
+		(uuid "952f3d72-67db-4cbe-ae21-f53259c1816b")
 	)
 	(bus
 		(pts
@@ -320,6 +314,16 @@
 			(type default)
 		)
 		(uuid "9a5b146a-c16b-4f4d-8b5b-717d6108c5b3")
+	)
+	(bus
+		(pts
+			(xy 138.43 77.47) (xy 146.05 77.47)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "a3fc6263-6c61-47f2-aec8-e9c31f85f8e4")
 	)
 	(wire
 		(pts
@@ -360,6 +364,16 @@
 			(type default)
 		)
 		(uuid "addf19dd-e882-4cf0-86a1-20b021c80dca")
+	)
+	(bus
+		(pts
+			(xy 146.05 58.42) (xy 158.75 58.42)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "ae17d590-e9d0-4b4d-9f34-bf4aa010bd7c")
 	)
 	(bus
 		(pts
@@ -431,16 +445,6 @@
 		)
 		(uuid "d58880b9-ba57-4177-a4cb-8b7190cf7883")
 	)
-	(bus
-		(pts
-			(xy 146.05 124.46) (xy 138.43 124.46)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "e4add8e9-757f-4c5c-b642-55066dec2cbb")
-	)
 	(wire
 		(pts
 			(xy 152.4 92.71) (xy 138.43 92.71)
@@ -450,6 +454,16 @@
 			(type default)
 		)
 		(uuid "e82b34f8-bee4-463c-94d4-f8613b24c747")
+	)
+	(bus
+		(pts
+			(xy 148.59 80.01) (xy 148.59 60.96)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "eac8efb6-8970-4704-aeb5-4ce5e5abfd3c")
 	)
 	(wire
 		(pts
@@ -480,6 +494,16 @@
 			(type default)
 		)
 		(uuid "f866639f-521e-4658-b8b9-6df36f5dae20")
+	)
+	(bus
+		(pts
+			(xy 148.59 60.96) (xy 158.75 60.96)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "ffdf9976-97f0-4dca-9e5b-a62ebb5b3666")
 	)
 	(sheet
 		(at 118.11 74.93)
@@ -626,7 +650,7 @@
 			)
 		)
 		(pin "ADC_IN" input
-			(at 138.43 82.55 0)
+			(at 138.43 83.82 0)
 			(uuid "fd2a003a-e85a-4dd9-bc70-41327494015a")
 			(effects
 				(font
@@ -636,7 +660,7 @@
 			)
 		)
 		(pin "DAC_OUT" output
-			(at 138.43 85.09 0)
+			(at 138.43 86.36 0)
 			(uuid "e6ca5baf-5959-4da6-8d94-bb2a783b7366")
 			(effects
 				(font
@@ -668,6 +692,26 @@
 		(pin "LCD_DC" output
 			(at 138.43 90.17 0)
 			(uuid "0d87d4e4-851e-44c9-8394-a5b48df73ca2")
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify right)
+			)
+		)
+		(pin "ENC1{ENC}" output
+			(at 138.43 77.47 0)
+			(uuid "52a2dc26-5a81-4b02-af27-64607945e054")
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify right)
+			)
+		)
+		(pin "ENC2{ENC}" output
+			(at 138.43 80.01 0)
+			(uuid "3382b062-1bbd-4f0b-b6b5-625d73242884")
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -777,16 +821,6 @@
 				(justify right)
 			)
 		)
-		(pin "SPI1{SPI}" input
-			(at 138.43 124.46 0)
-			(uuid "8bd361c5-2b49-4f06-8378-5b5e7233846b")
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify right)
-			)
-		)
 		(pin "S0" input
 			(at 118.11 135.89 180)
 			(uuid "9a4bec88-e491-4862-82b6-c6b70e789fc7")
@@ -836,7 +870,7 @@
 		)
 	)
 	(sheet
-		(at 80.01 34.29)
+		(at 118.11 45.72)
 		(size 20.32 21.59)
 		(exclude_from_sim no)
 		(in_bom yes)
@@ -851,8 +885,8 @@
 			(color 0 0 0 0.0000)
 		)
 		(uuid "699e22c4-7494-4d98-a0c1-55c97e2e9226")
-		(property "Sheetname" "POWER"
-			(at 80.01 33.5784 0)
+		(property "Sheetname" "Power"
+			(at 118.11 45.0084 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -861,7 +895,7 @@
 			)
 		)
 		(property "Sheetfile" "POWER.kicad_sch"
-			(at 80.01 56.4646 0)
+			(at 118.11 67.8946 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -912,7 +946,7 @@
 			)
 		)
 		(pin "ADC_IN" output
-			(at 158.75 82.55 180)
+			(at 158.75 83.82 180)
 			(uuid "8755bc54-20e8-4f0e-afc3-f532272d8ed1")
 			(effects
 				(font
@@ -922,7 +956,7 @@
 			)
 		)
 		(pin "DAC_OUT" output
-			(at 158.75 85.09 180)
+			(at 158.75 86.36 180)
 			(uuid "5530ab30-acd3-42a9-8698-c4d9c412615c")
 			(effects
 				(font
@@ -973,6 +1007,26 @@
 				(justify left top)
 			)
 		)
+		(pin "ENC1{ENC}" output
+			(at 158.75 58.42 180)
+			(uuid "a618140a-c176-4fd9-9b84-359283ade629")
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(pin "ENC2{ENC}" output
+			(at 158.75 60.96 180)
+			(uuid "b4f21ffd-c3db-42a2-a0bd-62bbda04dbe8")
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
 		(instances
 			(project "main_board"
 				(path "/5332464e-0c3a-49d2-8fb5-731d0e42ee15"
@@ -982,12 +1036,12 @@
 		)
 	)
 	(sheet
-		(at 191.77 104.14)
+		(at 158.75 128.27)
 		(size 20.32 21.59)
 		(exclude_from_sim no)
-		(in_bom yes)
-		(on_board yes)
-		(dnp no)
+		(in_bom no)
+		(on_board no)
+		(dnp yes)
 		(fields_autoplaced yes)
 		(stroke
 			(width 0.1524)
@@ -998,7 +1052,7 @@
 		)
 		(uuid "efc14d49-5591-4687-bd9d-a48f4b92c254")
 		(property "Sheetname" "LED Strips"
-			(at 191.77 103.4284 0)
+			(at 158.75 127.5584 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -1007,7 +1061,7 @@
 			)
 		)
 		(property "Sheetfile" "LED_STRIPS.kicad_sch"
-			(at 191.77 126.3146 0)
+			(at 158.75 150.4446 0)
 			(effects
 				(font
 					(size 1.27 1.27)

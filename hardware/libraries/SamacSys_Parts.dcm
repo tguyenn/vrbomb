@@ -42,4 +42,16 @@ K
 F http://www.ti.com/general/docs/suppproductinfo.tsp?distId=10&gotoUrl=http%3A%2F%2Fwww.ti.com%2Flit%2Fgpn%2Fadc121s021
 $ENDCMP
 #
+$CMP UJC-H-G-SMT-1-P6-TR
+D Type C, Power Only, 5 Vdc, 5 A, Vertical, Surface Mount w/ Anchor Pins, SMT Contacts, Gold Flash, 6 Pins, USB Receptacle
+K
+F https://www.sameskydevices.com/product/interconnect/connectors/usb-connectors/ujc-h-g-smt-1-p6-tr?srsltid=AfmBOoq0MAximae-I4xzV8cRqJrN6l5eTM0me0MutqXnan0TguB6mMwJ
+$ENDCMP
+#
+$CMP SN74HC157NSR
+D Quadruple 2-Line To 1-Line Data Selectors/Multiplexers
+K
+F http://www.ti.com/lit/gpn/sn74hc157
+$ENDCMP
+#
 #End Doc Library

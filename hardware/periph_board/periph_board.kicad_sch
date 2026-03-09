@@ -2987,7 +2987,7 @@
 		)
 		(uuid "c1568ec0-c59b-4ff9-8a21-61b92ab289c8")
 	)
-	(text "20 mA worst case scenario"
+	(text "1.2 mA worst case scenario"
 		(exclude_from_sim no)
 		(at 205.74 82.55 0)
 		(effects
@@ -3027,9 +3027,9 @@
 		)
 		(uuid "e1ad83ba-1476-42f8-80ac-1be4dabd524e")
 	)
-	(text "5 mA to drive ADC load when stepping 5V -> 3V3?"
+	(text "10 mA worst case scenario"
 		(exclude_from_sim no)
-		(at 217.678 46.99 0)
+		(at 205.74 47.244 0)
 		(effects
 			(font
 				(size 1.27 1.27)
@@ -22649,7 +22649,7 @@
 			)
 		)
 		(property "Value" "ADC121S021CIMFX_NOPB"
-			(at 224.028 56.388 0)
+			(at 223.52 55.626 0)
 			(effects
 				(font
 					(size 1.27 1.27)

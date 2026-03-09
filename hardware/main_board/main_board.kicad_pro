@@ -479,7 +479,12 @@
     },
     "net_colors": null,
     "netclass_assignments": null,
-    "netclass_patterns": []
+    "netclass_patterns": [
+      {
+        "netclass": "Default",
+        "pattern": "+5V"
+      }
+    ]
   },
   "pcbnew": {
     "last_paths": {
@@ -513,7 +518,7 @@
       "exclude_dnp": false,
       "fields_ordered": [
         {
-          "group_by": false,
+          "group_by": true,
           "label": "Reference",
           "name": "Reference",
           "show": true
@@ -525,7 +530,7 @@
           "show": true
         },
         {
-          "group_by": true,
+          "group_by": false,
           "label": "Value",
           "name": "Value",
           "show": true
@@ -549,7 +554,7 @@
           "show": true
         },
         {
-          "group_by": true,
+          "group_by": false,
           "label": "Footprint",
           "name": "Footprint",
           "show": true
@@ -600,6 +605,36 @@
           "group_by": false,
           "label": "LCSC Part #",
           "name": "LCSC Part #",
+          "show": false
+        },
+        {
+          "group_by": false,
+          "label": "Mouser Price/Stock",
+          "name": "Mouser Price/Stock",
+          "show": false
+        },
+        {
+          "group_by": false,
+          "label": "Mouser Part Number",
+          "name": "Mouser Part Number",
+          "show": false
+        },
+        {
+          "group_by": false,
+          "label": "Manufacturer_Name",
+          "name": "Manufacturer_Name",
+          "show": false
+        },
+        {
+          "group_by": false,
+          "label": "Manufacturer_Part_Number",
+          "name": "Manufacturer_Part_Number",
+          "show": false
+        },
+        {
+          "group_by": false,
+          "label": "Height",
+          "name": "Height",
           "show": false
         }
       ],
@@ -677,7 +712,7 @@
     ],
     [
       "699e22c4-7494-4d98-a0c1-55c97e2e9226",
-      "POWER"
+      "Power"
     ],
     [
       "5f6e8c8b-8839-490d-945a-17905525bfda",
@@ -685,23 +720,23 @@
     ],
     [
       "1f5f1fcf-8246-4477-bb34-eca921fd147d",
-      "Periph Board 1"
+      "Periph Int 1"
     ],
     [
       "5b0a4642-144e-4945-bf5c-6d00013df1a8",
-      "Periph Board 2"
+      "Periph Int 2"
     ],
     [
       "c23f013f-c172-44ea-a430-b28a1dc4e997",
-      "Periph Board 3"
+      "Periph Int 3"
     ],
     [
       "a0a99868-89e0-4883-a19f-c13e806883a3",
-      "Periph Board 4"
+      "Periph Int 4"
     ],
     [
       "243be2d0-a4e8-4a5c-8c93-adc2a4222a77",
-      "Periph Board 5"
+      "Periph Int 5"
     ]
   ],
   "text_variables": {}
