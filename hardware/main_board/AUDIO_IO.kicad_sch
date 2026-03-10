@@ -1121,6 +1121,16 @@
 		)
 		(uuid "e401ed47-c471-46fb-9797-53235fdd2f76")
 	)
+	(text "use mems microhpone thing lakshay said to use"
+		(exclude_from_sim no)
+		(at 86.614 108.712 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+		)
+		(uuid "f1c13004-5c42-4670-aa3a-4ea1cdd6018b")
+	)
 	(junction
 		(at 80.01 45.72)
 		(diameter 0)

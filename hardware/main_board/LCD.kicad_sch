@@ -920,7 +920,7 @@
 		)
 		(uuid "2d4241c1-67f3-4767-b082-984114e26215")
 	)
-	(label "CS_{SD}"
+	(label "CS_SD"
 		(at 35.56 86.36 180)
 		(effects
 			(font
@@ -930,7 +930,7 @@
 		)
 		(uuid "3c8463da-1fc5-44d7-bc8b-a8a186145570")
 	)
-	(label "CS_{LCD}"
+	(label "CS_LCD"
 		(at 35.56 62.23 180)
 		(effects
 			(font
@@ -940,7 +940,7 @@
 		)
 		(uuid "45f7feb0-674e-40f5-8627-201a2073f253")
 	)
-	(label "CS_{SD}"
+	(label "CS_SD"
 		(at 29.21 31.75 0)
 		(effects
 			(font
@@ -1020,7 +1020,7 @@
 		)
 		(uuid "eec4684d-60dc-4d0d-893e-114bd39f4e64")
 	)
-	(label "CS_{LCD}"
+	(label "CS_LCD"
 		(at 29.21 34.29 0)
 		(effects
 			(font
@@ -1041,7 +1041,7 @@
 		)
 		(uuid "1c35eae8-7541-414d-810c-9ba5ce7ca6d5")
 	)
-	(hierarchical_label "CS_{SD}"
+	(hierarchical_label "CS_SD"
 		(shape input)
 		(at 27.94 31.75 180)
 		(effects
@@ -1052,7 +1052,7 @@
 		)
 		(uuid "2986766f-b3dc-4f2e-8232-a8bd76b3a9d3")
 	)
-	(hierarchical_label "CS_{LCD}"
+	(hierarchical_label "CS_LCD"
 		(shape input)
 		(at 27.94 34.29 180)
 		(effects
