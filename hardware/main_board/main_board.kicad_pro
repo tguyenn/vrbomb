@@ -717,26 +717,6 @@
     [
       "efc14d49-5591-4687-bd9d-a48f4b92c254",
       "LED Strips"
-    ],
-    [
-      "1f5f1fcf-8246-4477-bb34-eca921fd147d",
-      "Periph Int 0"
-    ],
-    [
-      "5b0a4642-144e-4945-bf5c-6d00013df1a8",
-      "Periph Int 1"
-    ],
-    [
-      "c23f013f-c172-44ea-a430-b28a1dc4e997",
-      "Periph Int 2"
-    ],
-    [
-      "a0a99868-89e0-4883-a19f-c13e806883a3",
-      "Periph Int 3"
-    ],
-    [
-      "243be2d0-a4e8-4a5c-8c93-adc2a4222a77",
-      "Periph Int 4"
     ]
   ],
   "text_variables": {}

@@ -890,7 +890,7 @@
 		)
 		(uuid "f8aacf0c-938f-413b-b6d8-fbfcdd5ac66a")
 	)
-	(label "SPI1.MOSI"
+	(label "SPI0.MOSI"
 		(at 35.56 69.85 180)
 		(effects
 			(font
@@ -900,7 +900,7 @@
 		)
 		(uuid "12e16019-ed5b-44f0-bea4-743e7c76db6b")
 	)
-	(label "SPI1.SCK"
+	(label "SPI0.SCK"
 		(at 30.48 27.94 0)
 		(effects
 			(font
@@ -960,7 +960,7 @@
 		)
 		(uuid "83233438-7d03-4c27-8411-2ca72f3ce8f2")
 	)
-	(label "SPI1.MISO"
+	(label "SPI0.MISO"
 		(at 30.48 22.86 0)
 		(effects
 			(font
@@ -970,7 +970,7 @@
 		)
 		(uuid "86e2786a-37ce-44da-8532-2e9ddb903b62")
 	)
-	(label "SPI1.SCK"
+	(label "SPI0.SCK"
 		(at 35.56 66.04 180)
 		(effects
 			(font
@@ -980,7 +980,7 @@
 		)
 		(uuid "b9a7984e-56e7-48c9-b7bc-2c4d5c3dd6ff")
 	)
-	(label "SPI1.MOSI"
+	(label "SPI0.MOSI"
 		(at 35.56 90.17 180)
 		(effects
 			(font
@@ -990,7 +990,7 @@
 		)
 		(uuid "be4b8cf4-0597-4664-a473-d084aa2886b2")
 	)
-	(label "SPI1.MISO"
+	(label "SPI0.MISO"
 		(at 35.56 93.98 180)
 		(effects
 			(font
@@ -1000,7 +1000,7 @@
 		)
 		(uuid "d828bbf0-ed3d-4c08-93e6-bd18b25e1e01")
 	)
-	(label "SPI1.MOSI"
+	(label "SPI0.MOSI"
 		(at 30.48 25.4 0)
 		(effects
 			(font
@@ -1010,7 +1010,7 @@
 		)
 		(uuid "e8f61658-426e-4845-a03c-b72075288431")
 	)
-	(label "SPI1.SCK"
+	(label "SPI0.SCK"
 		(at 35.56 97.79 180)
 		(effects
 			(font
@@ -1030,7 +1030,7 @@
 		)
 		(uuid "fa0cbcdd-5579-4aa6-9c71-eec2852263b8")
 	)
-	(hierarchical_label "SPI1{SPI}"
+	(hierarchical_label "SPI0{SPI}"
 		(shape bidirectional)
 		(at 26.67 19.05 180)
 		(effects

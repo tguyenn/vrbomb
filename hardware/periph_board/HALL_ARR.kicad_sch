@@ -567,7 +567,7 @@
 	)
 	(text "3.2 mA each worst case scenario\n\n3.2 mA x 12 sensors = 38.4 mA"
 		(exclude_from_sim no)
-		(at 196.85 29.464 0)
+		(at 181.61 23.368 0)
 		(effects
 			(font
 				(size 1.27 1.27)

@@ -54,4 +54,10 @@ K
 F http://www.ti.com/lit/gpn/sn74hc157
 $ENDCMP
 #
+$CMP MCP3221A5T-E_OT
+D A/D Converter 12-Bit I2C 22ksps SOT23-5
+K
+F https://datasheet.datasheetarchive.com/originals/distributors/SFDatasheet-4/sf-00090069.pdf
+$ENDCMP
+#
 #End Doc Library
