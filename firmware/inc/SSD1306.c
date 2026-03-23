@@ -1,9 +1,9 @@
 // SSD1306.c
-// Runs on TM4C123
+// Runs on MSPM0
 // Use I2C to send an 8-bit data/commands to the SSD1306 128 by 64 pixel oLED
 // pixel LCD to display text, images, or other information.
 // Jonathan and Daniel Valvano
-// Jan 9, 2021
+// June 10, 2024
 // Derived from:  Adafruit_SSD1306.cpp
 // Font table, initialization, and other functions based
 // off of Nokia_5110_Example from Spark Fun:
@@ -19,7 +19,7 @@
  http://users.ece.utexas.edu/~valvano/
 
 Simplified BSD License (FreeBSD License)
-Copyright (c) 2024, Jonathan Valvano, All rights reserved.
+Copyright (c) 2021, Jonathan Valvano, All rights reserved.
 
 Redistribution and use in source and binary forms, with or without modification,
 are permitted provided that the following conditions are met:
@@ -48,65 +48,37 @@ policies, either expressed or implied, of the FreeBSD Project.
 #include <stdio.h>
 #include <stdint.h>
 #include <stdlib.h>
+#include "file.h"
+#include <ti/devices/msp/msp.h>
+#include "../inc/LaunchPad.h"
+#include "../inc/Clock.h"
+#include "../inc/I2C.h"
 #include "../inc/SSD1306.h"
-#include "../inc/CortexM.h"
-#define USEprintf 0
-// Tested for four possible hardware connections 
-// compile parameter I2C in SSD1306.h
-/*
- *  I2C0 Conncection | I2C1 Conncection | I2C2 Conncection | I2C3 Conncection
- *  ---------------- | ---------------- | ---------------- | ----------------
- *  SCL -------- PB2 | SCL -------- PA6 | SCL -------- PE4 | SCL -------- PD0
- *  SDA -------- PB3 | SDA -------- PA7 | SDA -------- PE5 | SDA -------- PD1
- */
-#if I2C == 0
-#include "../inc/I2CB1.h"
-#define I2C_Init I2C0_Init
-#define I2C_Send2 I2C0_Send2
-#define I2C_Send I2C0_Send
-#define I2C_SendData I2C0_SendData
-#elif I2C == 2
-#include "../inc/I2C2.h"
-#define I2C_Init I2C2_Init
-#define I2C_Send2 I2C2_Send2
-#define I2C_Send I2C2_Send
-#define I2C_SendData I2C2_SendData
-#elif I2C == 3
-#include "../inc/I2C3.h"
-#define I2C_Init I2C3_Init
-#define I2C_Send2 I2C3_Send2
-#define I2C_Send I2C3_Send
-#define I2C_SendData I2C3_SendData
-#else
-#include "../inc/I2C1.h"
-#define I2C_Init I2C1_Init
-#define I2C_Send2 I2C1_Send2
-#define I2C_Send I2C1_Send
-#define I2C_SendData I2C1_SendData
-#endif
- //
-// rough estimate of execution times (runs a little faster with 1.5k pullup from SDA to 3.3V, and no glitch)
-//                      with 1.5k   without
-// SSD1306_OutClear      24.8ms    26.2ms, clears entire display 
-// SSD1306_OutBuffer     24.7ms    26.1ms, sends 1024 bytes, 128 by 64 pixels to OLED 
-// SSD1306_DrawBMP         91us      91us, (10 by 16 size), doesn't output, just fills buffer 
-// SSD1306_OutChar        196us     207us, does output to OLED 
-// SSD1306_OutUDec        983us    1038us, outputs 5 characters to OLED
-// SSD1306_ClearBuffer    153us     153us, empties buffer, not OLED output
-#define SSD1306ADDR 0x3C
-// Typo on OLED has a 0-ohm resistor selection 
-// that says        "IIC ADDRESS SELECT 0x78 0x7A"
-// should have said "IIC ADDRESS SELECT 0x3C 0x3D"
 // search for I2C SSD1306 on Amazon.com
-// https://www.amazon.com/gp/product/B0871KW7BD
+// https://www.amazon.com/s?k=SSD1306
 // VCC   3.3V power to OLED
 // GND   ground
 // SCL   PB2 I2C clock
 // SDA   PB3 I2C data
 
+//
+// rough estimate of execution times (runs a little faster with 1.5k pullup from SDA to 3.3V, and no glitch)
+//                      with 1.5k
+// SSD1306_OutClear      25.7ms    lears entire display
+// SSD1306_OutBuffer     24.7ms    sends 1024 bytes, 128 by 64 pixels to OLED
+// SSD1306_DrawBMP        261us    (10 by 16 size), doesn't output, just fills buffer
+// SSD1306_OutChar        206us    does output to OLED
+// SSD1306_OutUDec       1042us    outputs 5 characters to OLED
+// SSD1306_ClearBuffer    932us    empties buffer, not OLED output
+#define SSD1306ADDR 0x3C
+// Some displays have a typo on OLED has a 0-ohm resistor selection
+// that says        "IIC ADDRESS SELECT 0x78 0x7A"
+// should have said "IIC ADDRESS SELECT 0x3C 0x3D"
+
 // *************************** Screen dimensions ***************************
 #define WIDTH     128
 #define HEIGHT     64
+#define CR   0x0D
 
 uint8_t buffer[WIDTH*HEIGHT/8]; // 8192 bits or 1024 bytes
 int vccstate;
@@ -385,66 +357,17 @@ static const uint8_t ASCII[][6] = {
 (((a) ^= (b)), ((b) ^= (a)), ((a) ^= (b))) ///< No-temp-var swap operation
 
 
-
-
-// This is a helper function that sends 8-bit commands to the LCD.
-// Inputs: command  8-bit function code to transmit
-// Outputs: none
-// Assumes: UCA3 and Port 9 have already been initialized and enabled
-// The Data/Command pin must be valid when the eighth bit is
-// sent.  The eUSCI module has no hardware FIFOs.
-// 1) Wait for SPI to be idle (let previous frame finish)
-// 2) Set DC for command (0)
-// 3) Write command to TXBUF, starts SPI
-// 4) Wait for SPI to be idle (after transmission complete)
-//void static commandwrite(uint8_t command){
-////  volatile uint8_t dummy;
-//  while((EUSCI_A3->STATW&0x0001)==0x0001){};   // UCBUSY, wait until SPI not busy
-//  DC = 0;
-//  EUSCI_A3->TXBUF = command;                   // command out
-//  while((EUSCI_A3->STATW&0x0001)==0x0001){};   // UCBUSY, wait until SPI not busy
-////  dummy = UCA3->RXBUF;                         // response meaningless here
-//}
-//void ssd1306_Testcommandwrite(void){
-//  while(1){
-//    commandwrite(0x21);
-//  }
-//}
-// This is a helper function that sends 8-bit data to the LCD.
-// Inputs: data  8-bit data to transmit
-// Outputs: none
-// Assumes: SPI have already been initialized and enabled
-// The Data/Command pin must be valid when the eighth bit is
-// sent.  The SPI module has no hardware FIFOs.
-// 1) Wait for transmitter to be empty (let previous frame finish)
-// 2) Set DC for data (1)
-// 3) Write data to TXBUF, starts SPI
-// Note: takes 2us to output a byte
-//void static datawrite(uint8_t data){//SPI version
-////  volatile uint8_t dummy;
-//  while((EUSCI_A3->IFG&0x0002)==0x0000){};     // wait until UCA3TXBUF empty
-//  DC = 1;
-//  EUSCI_A3->TXBUF = data;                      // data out
-////  dummy = UCA3->RXBUF;                         // response meaningless here
-//}
-// 8000000 bps, msb first, mode0
-
 void ssd1306command(uint8_t c) {
-//  commandwrite(c);
   I2C_Send2(SSD1306ADDR,0,c);
 }
 void ssd1306command1(uint8_t c) {
-//  commandwrite(c);
   I2C_Send2(SSD1306ADDR,0,c);
 
 }
 void ssd1306commandList(const uint8_t *c, uint32_t n) {
   // added 0 in front of each list
   I2C_Send(SSD1306ADDR,(uint8_t *)c,n);
-//  while(n--) {
-//    commandwrite(*c);
-//    c++;
-//  }
+
   
 }
 
@@ -522,7 +445,7 @@ static const uint8_t init5[] = {
 int SSD1306_Init(int vccst) {
 //  volatile uint32_t delay;
   Clock_Delay1ms(300);
-  I2C_Init(400,80000); // 100kHz
+  I2C_Init(); // 400kHz
   vccstate = vccst;
 //  RESET = 0;                            // reset the LCD to a known state, RESET low
 //  for(delay=0; delay<10; delay=delay+1);// delay minimum 100 ns
@@ -609,11 +532,13 @@ void SSD1306_DrawPoint(int32_t x, int32_t y){
 // color is white or black, not invert
 void SSD1306_DrawChar(int16_t x, int16_t y, char letter, uint16_t color){int mask;
 uint16_t dot;
-	if(letter < 0x20) return;
+  uint32_t k = (uint32_t)(letter & 0xFF); // convert to unsigned regardless of whether char is signed or unsigned
+  if(k < 0x20) return;
+
   for(int i=0;i<5;i++){
     mask = 0x01;
     for(int j=0; j<7; j++){
-      if(ASCII[letter-0x20][i]&mask){
+      if(ASCII[k-0x20][i]&mask){
         dot = color;
       }else{
         dot = color^1;
@@ -652,20 +577,8 @@ void SSD1306_ClearBuffer(void) {int i;
     @return None (void).
 */
 void SSD1306_OutClear(void) {
-  //int i;
-  // clear the entire screen, even any columns on the right that did not contain text
-//  ssd1306command(SSD1306_PAGEADDR);
-//  ssd1306command(0);                   // page start address
-//  ssd1306command((HEIGHT/8) - 1);      // page end (bottom of screen)
-//  ssd1306command(SSD1306_COLUMNADDR);
-//  ssd1306command(0);                   // column start address
-//  ssd1306command(WIDTH - 1);           // column end address
-//  for(i=0; i<WIDTH*HEIGHT/8; i++){
-//    datawrite(0x00);//SPI version
-//  }
-	SSD1306_ClearBuffer();
-	SSD1306_OutBuffer();
-  
+  SSD1306_ClearBuffer();
+  SSD1306_OutBuffer();
 }
 
 
@@ -1329,6 +1242,7 @@ void SSD1306_SetCursor(uint16_t newX, uint16_t newY){
 // Outputs: none
 // Assumes: OLED is in horizontal addressing mode (command 0x20, 0x00)
 void SSD1306_OutChar(char data){//int i;
+  uint32_t k = (uint32_t)(data & 0xFF); // convert to unsigned regardless of whether char is signed or unsigned
   if((data == 0x0A) || (data == 0x0D)){ // line feed or carriage return
     // go to the first column
     CurrentX = 0;
@@ -1345,7 +1259,7 @@ void SSD1306_OutChar(char data){//int i;
     ssd1306command(SSD1306_PAGEADDR);
     ssd1306command(CurrentY);          // page start address
     ssd1306command((HEIGHT/8) - 1);    // page end (bottom of screen)
-  }else if(data >= 0x20){ // printable character
+  }else if(k >= 0x20){ // printable character
     CurrentX = CurrentX + 6;
     if(CurrentX > (WIDTH - (WIDTH%6))){
       // go to the first column
@@ -1382,7 +1296,7 @@ void SSD1306_OutChar(char data){//int i;
         }
       }
     }
-    I2C_SendData(SSD1306ADDR,(uint8_t *)&ASCII[data - 0x20],6);
+    I2C_SendData(SSD1306ADDR,(uint8_t *)&ASCII[k - 0x20],6);
 //    for(i=0; i<5; i=i+1){
 //      datawrite(ASCII[data - 0x20][i]);//SPI version
 //    }
@@ -1590,6 +1504,7 @@ void SSD1306_OutUHex32(uint32_t n){
   SSD1306_OutHex7(n>>4);  /* bits 7-4 */
   SSD1306_OutHex7(n);     /* bits 3-0 */
 }
+
 void SSD1306_OutUDec16(uint32_t n){
   SSD1306_OutChar(' ');
   if(n>=100){
@@ -1623,40 +1538,14 @@ void SSD1306_OutUDec2(uint32_t n){
   }
 }
 
-//********SSD1306_OutUFix3_1*****************
-// Output a 16-bit number in unsigned 4-digit fixed point, 0.1 resolution
-// numbers 0 to 9999 printed as "  0.0" to "999.9"
-// Inputs: n  16-bit unsigned number
-// Outputs: none
-void SSD1306_OutUFix3_1(uint16_t n){
-  if(n>9999)n=9999;
-  if(n>=1000){  // 1000 to 9999
-    SSD1306_OutChar(n/1000+'0'); /* hundreds digit */
-    n = n%1000; //the rest
-    SSD1306_OutChar(n/100+'0'); /* tens digit */
-    n = n%100; //the rest
-  }else { // 0 to 999
-    SSD1306_OutChar(' '); /* n is between 0.0 and 9.9 */
-    if(n>=100){  // 100 to 999
-      SSD1306_OutChar((n/100)+'0'); /* hundreds digit */
-      n = n%100; //the rest
-    }else{
-      SSD1306_OutChar(' '); /* n is between 0.0 and 9.9 */
-    }
-  }
-  SSD1306_OutChar(n/10+'0'); /* ones digit */
-  n = n%10; //the rest
-  SSD1306_OutChar('.');
-  SSD1306_OutChar(n+'0'); /* tenths digit */
 
-}
-#if USEprintf
-// Print a character to ST7735 LCD.
+
+// Print a character to SSD1306 LCD.
 int fputc(int ch, FILE *f){
   SSD1306_OutChar(ch);
   return 1;
 }
-// No input from Nokia, always return data.
+// No input from SSD1306, always return data.
 int fgetc (FILE *f){
   return 0;
 }
@@ -1665,5 +1554,50 @@ int ferror(FILE *f){
   /* Your implementation of ferror */
   return EOF;
 }
-#endif
+
+
+
+int SSD1306_open(const char *path, unsigned flags, int llv_fd){
+  SSD1306_Init(SSD1306_SWITCHCAPVCC);
+  return 0;
+}
+int SSD1306_close( int dev_fd){
+  return 0;
+}
+int SSD1306_read(int dev_fd, char *buf, unsigned count){char ch;
+// not implemented
+  return 1;
+}
+int SSD1306_write(int dev_fd, const char *buf, unsigned count){ unsigned int num=count;
+  while(num){
+    SSD1306_OutChar(*buf);
+    buf++;
+    num--;
+  }
+  return count;
+}
+off_t SSD1306_lseek(int dev_fd, off_t ioffset, int origin){
+  return 0;
+}
+int SSD1306_unlink(const char * path){
+  return 0;
+}
+int SSD1306_rename(const char *old_name, const char *new_name){
+  return 0;
+}
+
+//------------SSD1306_InitPrintf------------
+// Initialize the ST7735 for printf
+// Input: none
+// Output: none
+void SSD1306_InitPrintf(void){int ret_val; FILE *fptr;
+  SSD1306_Init(SSD1306_SWITCHCAPVCC);
+  ret_val = add_device("ssd1306", _SSA, SSD1306_open, SSD1306_close, SSD1306_read, SSD1306_write, SSD1306_lseek, SSD1306_unlink, SSD1306_rename);
+  if(ret_val) return; // error
+  fptr = fopen("ssd1306","w");
+  if(fptr == 0) return; // error
+  freopen("ssd1306:", "w", stdout); // redirect stdout to SSD1306
+  setvbuf(stdout, NULL, _IONBF, 0); // turn off buffering for stdout
+
+}
 

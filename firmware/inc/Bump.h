@@ -3,11 +3,11 @@
  * @brief RSLK Bumper switches
  <table>
 <caption id="Bump pins">RSLK Bumper switches</caption>
-<tr><th>bump<th> TM4C <th> MSPM0  <th> Position
-<tr><td> 0  <td> PA5  <td> PA27   <td> Left
-<tr><td> 1  <td> PF0  <td> PB15   <td> Center Left
-<tr><td> 2  <td> PB3  <td> PA28   <td> Center Right
-<tr><td> 3  <td> PC4  <td> PA31   <td> Right
+<tr><th> TM4C <th> MSPM0  <th> Description
+<tr><td> PA5  <td> PA27   <td> Left, Bump 0,
+<tr><td> PF0  <td> PB15   <td> Center Left, Bump 1,
+<tr><td> PB3  <td> PA28   <td> Center Right, Bump 2
+<tr><td> PC4  <td> PA31   <td> Right, Bump 3
 </table>
  * @{*/
 /**
@@ -23,18 +23,17 @@
  * @date      June 28, 2024
  <table>
 <caption id="Bump pins2">RSLK Bumper switches</caption>
-<tr><th>bump<th> TM4C <th> MSPM0  <th> Position
-<tr><td> 0  <td> PA5  <td> PA27   <td> Left
-<tr><td> 1  <td> PF0  <td> PB15   <td> Center Left
-<tr><td> 2  <td> PB3  <td> PA28   <td> Center Right
-<tr><td> 3  <td> PC4  <td> PA31   <td> Right
+<tr><th> TM4C <th> MSPM0  <th> Description
+<tr><td> PA5  <td> PA27   <td> Left, Bump 0,
+<tr><td> PF0  <td> PB15   <td> Center Left, Bump 1,
+<tr><td> PB3  <td> PA28   <td> Center Right, Bump 2
+<tr><td> PC4  <td> PA31   <td> Right, Bump 3
 </table>
   ******************************************************************************/
 
 
 #ifndef __BUMP_H__
 #define __BUMP_H__
-#include <stdint.h>
 
 
 /**

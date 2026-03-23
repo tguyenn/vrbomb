@@ -7,21 +7,21 @@
 #include <stdio.h>
 #include <stdint.h>
 #include <ti/devices/msp/msp.h>
-#include "../../inc/ST7735.h"
-#include "../../inc/Clock.h"
-#include "../../inc/LaunchPad.h"
-#include "../../inc/TExaS.h"
-#include "../../inc/Timer.h"
-#include "../../inc/ADC1.h"
+#include "../inc/ST7735.h"
+#include "../inc/Clock.h"
+#include "../inc/LaunchPad.h"
+#include "../inc/TExaS.h"
+#include "../inc/Timer.h"
+#include "../inc/ADC1.h"
 
 // ****note to ECE319K students****
 // the data sheet says the ADC does not work when clock is 80 MHz
 // however, the ADC seems to work on my boards at 80 MHz
 // I suggest you try 80MHz, but if it doesn't work, switch to 40MHz
-// void PLL_Init(void){ // set phase lock loop (PLL)
-//   // Clock_Init40MHz(); // run this line for 40MHz
-//   Clock_Init80MHz(0);   // run this line for 80MHz
-// }
+void PLL_Init(void){ // set phase lock loop (PLL)
+  // Clock_Init40MHz(); // run this line for 40MHz
+  Clock_Init80MHz(0);   // run this line for 80MHz
+}
 
 
 // // implement this function
@@ -52,15 +52,15 @@
 // // use main1 to test slidepot interface
 // // connect slidepot pin 2 to ADC1 channel 5, PB18
 // // Open TExaSdisplay and see slidepot pin2 go from 0 to 3.3V
-// int main(void){ // main1
-//   __disable_irq();
-//   PLL_Init(); // set bus speed
-//   LaunchPad_Init();
-//   TExaS_Init(ADC1,5,0); //ADC1 channel 5, PB18, slidepot
-//   __enable_irq();
-//   while(1){
-//   }
-// }
+int main(void){ // main1
+  __disable_irq();
+  PLL_Init(); // set bus speed
+  LaunchPad_Init();
+  TExaS_Init(ADC1,5,0); //ADC1 channel 5, PB18, slidepot
+  __enable_irq();
+  while(1){
+  }
+}
 // // if you have a voltmeter/scope,
 // // use the voltmeter/scope see slidepot pin2 go from 0 to 3.3V
 

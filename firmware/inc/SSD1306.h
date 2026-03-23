@@ -1,20 +1,24 @@
-/**
+/*!
+ * @defgroup Display
+ * @brief OLED and LCD displays
+ * @{*/
+ /**
  * @file      SSD1306.h
  * @brief     Provide simple I/O functions for the SSD 1306 OLED
  * @details   Use I2C to send an 8-bit code to the 1306 64x128
  * pixel OLED to display text, images, or other information.
- * @version   EE319K Spring 2021
+ * @version   RSLK2
  * @author    Daniel Valvano and Jonathan Valvano
- * @copyright Copyright 2020 by Jonathan W. Valvano, valvano@mail.utexas.edu,
+ * @copyright Copyright 2025 by Jonathan W. Valvano, valvano@mail.utexas.edu,
  * @warning   AS-IS
  * @note      For more information see  http://users.ece.utexas.edu/~valvano/
- * @date      Nov 9, 2020
+ * @date      December 23, 2024
  * @remark Font table based
  * off of Nokia_5110_Example from Spark Fun: 7-17-2011<br>
  * Spark Fun Electronics 2011, Nathan Seidle<br>
  * http://dlnmh9ip6v2uc.cloudfront.net/datasheets/LCD/Monochrome/Nokia_5110_Example.pde
  *
- * Typo on OLED has a 0-ohm resistor selection <br>
+ * Some displays have a typo on OLED has a 0-ohm resistor selection <br>
  * that says        "IIC ADDRESS SELECT 0x78 0x7A"<br>
  * should have said "IIC ADDRESS SELECT 0x3C 0x3D"<br>
  * https://www.amazon.com/gp/product/B0871KW7BD<br>
@@ -25,46 +29,24 @@
  * SSD1306_DrawBMP       75us (10 by 16 size), doesn't print, just fills buffer<br>
  * SSD1306_OutChar       206us, does print<br>
  * SSD1306_OutUDec       1032us, outputs 5 characters<br>
-<table>
-<caption id="I2C0 SSD1306">I2C0 SSD1306 OLED</caption>
-<tr><th>SSD1306 <th> LaunchPad pin
-<tr><td>GND     <td>ground
-<tr><td>3.3V    <td>3.3V power to OLED
-<tr><td>SCL     <td>PB2 I2C clock
-<tr><td>SDA     <td>PB3 I2C data
+ <table>
+<caption id="SSD1306_1">SSD1306 pins </caption>
+<tr><th>Pin <th>Function<th>Description
+<tr><td>VCC <td>Power   <td> +3.3V
+<tr><td>PB2 <td>I2C1-SCL<td>J1.9 SSD1306 SCL, with 1.5k pullup to 3.3V
+<tr><td>PB3 <td>I2C1-SDA<td>J1.10 SSD1306 SDA
+<tr><td>GND <td>GND     <td> Ground
 </table>
-<table>
-<caption id="I2C1 SSD1306">I2C1 SSD1306 OLED</caption>
-<tr><th>SSD1306 <th> LaunchPad pin
-<tr><td>GND     <td>ground
-<tr><td>3.3V    <td>3.3V power to OLED
-<tr><td>SCL     <td>PA6 I2C clock
-<tr><td>SDA     <td>PA7 I2C data
-</table>
-<table>
-<caption id="I2C2 SSD1306">I2C2 SSD1306 OLED</caption>
-<tr><th>SSD1306 <th> LaunchPad pin
-<tr><td>GND     <td>ground
-<tr><td>3.3V    <td>3.3V power to OLED
-<tr><td>SCL     <td>PE4 I2C clock
-<tr><td>SDA     <td>PE5 I2C data
-</table>
-<table>
-<caption id="I2C3 SSD1306">I2C3 SSD1306 OLED</caption>
-<tr><th>SSD1306 <th> LaunchPad pin
-<tr><td>GND     <td>ground
-<tr><td>3.3V    <td>3.3V power to OLED
-<tr><td>SCL     <td>PD0 I2C clock
-<tr><td>SDA     <td>PD1 I2C data
-</table>
+
+
  This example accompanies the book
    "Embedded Systems: Introduction to Robotics,
-   Jonathan W. Valvano, ISBN: 9781074544300, copyright (c) 2020
+   Jonathan W. Valvano, ISBN: 9781074544300, copyright (c) 2024
  For more information about my classes, my research, and my books, see
  http://users.ece.utexas.edu/~valvano/
 
 Simplified BSD License (FreeBSD License)
-Copyright (c) 2020, Jonathan Valvano, All rights reserved.
+Copyright (c) 2024, Jonathan Valvano, All rights reserved.
 
 Redistribution and use in source and binary forms, with or without modification,
 are permitted provided that the following conditions are met:
@@ -92,29 +74,39 @@ policies, either expressed or implied, of the FreeBSD Project.
 
 
  */
-/*!
- * @defgroup Display
- * @brief
- * @{*/
+
 #ifndef _SSD1306_H_
 #define _SSD1306_H_
 #include <stdint.h>
-// Tested for four possible hardware connections I2C=0 I2C=1 I2C=2 and I2C=3
-#define I2C 1
-/*
- *  I2C0 Conncection | I2C1 Conncection | I2C2 Conncection | I2C3 Conncection
- *  ---------------- | ---------------- | ---------------- | ----------------
- *  SCL -------- PB2 | SCL -------- PA6 | SCL -------- PE4 | SCL -------- PD0
- *  SDA -------- PB3 | SDA -------- PA7 | SDA -------- PE5 | SDA -------- PD1
+
+/**
+ * \brief Black is 0 or off
  */
-#define SSD1306_BLACK               0 ///< Draw 'off' pixels
-#define SSD1306_WHITE               1 ///< Draw 'on' pixels
-#define SSD1306_INVERSE             2 ///< Invert pixels
-#define SSD1306_EXTERNALVCC         0x01 ///< External display voltage source
-#define SSD1306_SWITCHCAPVCC        0x02 ///< Gen. display voltage from 3.3V
-#define CR 0x0D
-#define true 1   ///< Function successive
-#define false 0  ///< Function failed
+#define SSD1306_BLACK               0 
+/**
+ * \brief White is 1 or on
+ */
+#define SSD1306_WHITE               1 
+/**
+ * \brief Inverse will flip bits
+ */
+#define SSD1306_INVERSE             2 
+/**
+ * \brief SSD1306_EXTERNALVCC specifies External display voltage source
+ */
+#define SSD1306_EXTERNALVCC         0x01 
+/**
+ * \brief SSD1306_SWITCHCAPVCC specifies display voltage from 3.3V
+ */
+#define SSD1306_SWITCHCAPVCC        0x02 
+/**
+ * \brief true means success
+ */
+#define true 1  
+/**
+ * \brief false means failure
+ */
+#define false 0  
 
 /*!
     @brief  II2 driver for SSD1306 OLED display
@@ -131,7 +123,7 @@ policies, either expressed or implied, of the FreeBSD Project.
  * Initialize OLED
  * @param vccst Vcc voltage parameter, uSSD1306_EXTERNALVCC or SSD1306_SWITCHCAPVCC
  * @return success or failure
- * @note for ECE319K and ECE445L use vccst=SSD1306_SWITCHCAPVCC
+ * @note for EE319K use vccst=SSD1306_SWITCHCAPVCC
  */
 int  SSD1306_Init(int vccst);
 
@@ -505,16 +497,6 @@ void SSD1306_OutUHex32(uint32_t n);
 void SSD1306_OutUDec16(uint32_t n);
 
 /**
- * Output a 16-bit number in unsigned 4-digit fixed point, 0.1 resolution
- * fixed size of four right-justified characters.<br>
- * numbers 0 to 999 printed as "  0.0" to "999.9"
- * @param n  16-bit unsigned number
- * @return none
- * @brief  Print a 16-bit unsigned fixed-point number to the OLED
- * @note use SSD1306_SetCursor to specify position
- */
-void SSD1306_OutUFix3_1(uint16_t n);
-/**
  * Output two decimal digits to the SSD1306 OLED.
  * Prints 2 characters without leading space
  * @param n unsigned number 0-99 to print
@@ -549,4 +531,10 @@ void SSD1306_SetPlot(int32_t minX, int32_t maxX, int32_t minY, int32_t maxY, uin
 */
 void SSD1306_DrawPoint(int32_t x, int32_t y);
 
+/*!
+    @brief  Initialize the SSD1306 for printf
+    @return None (void).
+*/
+void SSD1306_InitPrintf(void);
 #endif // _SSD1306_H_
+/** @}*/

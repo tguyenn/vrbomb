@@ -1,126 +1,218 @@
-// UART.h
-// LM4F120, TM4C123, TM4C1294
-// Simple device driver for the UART.
-// Daniel Valvano
-// Jan 3, 2020
 
-/* This example accompanies the books
-  "Embedded Systems: Introduction to ARM Cortex M Microcontrollers",
-  ISBN: 978-1469998749, Jonathan Valvano, copyright (c) 2020
+/*!
+ * @defgroup UART
+ * @brief Asynchronous serial communication
+ <table>
+<caption id="UARTpins">UART pins on the MSPM0G3507</caption>
+<tr><th>Pin  <th>Description
+<tr><td>PA10 <td>UART0 Tx to XDS Rx
+<tr><td>PA11 <td>UART0 Rx from XDS Tx
+</table>
+ * @{*/
+/**
+ * @file      UART.h
+ * @brief     Initialize UART0
+ * @details   UART0 initialization. 115200 baud,
+ * 1 start, 8 data bits, 1 stop, no parity.<br>
 
-"Embedded Systems: Real Time Interfacing to ARM Cortex M Microcontrollers",
-   ISBN: 978-1463590154, Jonathan Valvano, copyright (c) 2020
- 
- Copyright 2020 by Jonathan W. Valvano, valvano@mail.utexas.edu
-    You may use, edit, run or distribute this file
-    as long as the above copyright notice remains
- THIS SOFTWARE IS PROVIDED "AS IS".  NO WARRANTIES, WHETHER EXPRESS, IMPLIED
- OR STATUTORY, INCLUDING, BUT NOT LIMITED TO, IMPLIED WARRANTIES OF
- MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE APPLY TO THIS SOFTWARE.
- VALVANO SHALL NOT, IN ANY CIRCUMSTANCES, BE LIABLE FOR SPECIAL, INCIDENTAL,
- OR CONSEQUENTIAL DAMAGES, FOR ANY REASON WHATSOEVER.
- For more information about my classes, my research, and my books, see
- http://users.ece.utexas.edu/~valvano/
- */
+ * @version   ECE319K v1.2
+ * @author    Daniel Valvano and Jonathan Valvano
+ * @copyright Copyright 2025 by Jonathan W. Valvano, valvano@mail.utexas.edu,
+ * @warning   AS-IS
+ * @note      For more information see  http://users.ece.utexas.edu/~valvano/
+ * @date      December 23, 2024
+ <table>
+<caption id="UARTpins2">UART pins on the MSPM0G3507</caption>
+<tr><th>Pin  <th>Description
+<tr><td>PA10 <td>UART0 Tx to XDS Rx
+<tr><td>PA11 <td>UART0 Rx from XDS Tx
+</table>
+  ******************************************************************************/
 
-// U0Rx (VCP receive) connected to PA0
-// U0Tx (VCP transmit) connected to PA1
+#ifndef __UART_H__
+#define __UART_H__
+#include <stdint.h>
 
 // standard ASCII symbols
+/**
+ * \brief CR is carriage return
+ */
 #define CR   0x0D
+/**
+ * \brief LF is line feed
+ */
 #define LF   0x0A
+/**
+ * \brief BS is back space
+ */
 #define BS   0x08
+/**
+ * \brief ESC is escape character
+ */
 #define ESC  0x1B
+/**
+ * \brief SP is space
+ */
 #define SP   0x20
+/**
+ * \brief DEL is delete
+ */
 #define DEL  0x7F
+/* 
+ * Derived from uart_rw_multibyte_fifo_poll_LP_MSPM0G3507_nortos_ticlang
+ */
+ 
 
-
-//------------UART_Init------------
-// Initialize the UART for 115,200 baud rate (assuming 80 MHz clock),
-// 8 bit word length, no parity bits, one stop bit, FIFOs enabled
-// Input: none
-// Output: none
+/**
+ * initialize 0 for 115200 baud rate.
+ * - PA10 = UART0 Tx to XDS Rx
+ * - PA11 = UART0 Rx from XDS Tx
+ *
+ * There are two implementations:
+ * - UART_Init in <b>UARTbusywait.c</b> implements busy-wait synchronization
+ * - UART_Init in <b>UARTints.c</b> implements interrupt synchronization
+ *
+ * @param none
+ * @return none
+ * @brief  Initialize UART0
+*/
 void UART_Init(void);
 
-//------------UART_InChar------------
-// Wait for new serial port input
-// Input: none
-// Output: ASCII code for key typed
+/**
+ * Wait for new UART0 serial port input
+ * @param none
+ * @return char ASCII code for key typed
+ * @brief input from UART0
+ */
 char UART_InChar(void);
 
-//------------UART_OutChar------------
-// Output 8-bit to serial port
-// Input: letter is an 8-bit ASCII character to be transferred
-// Output: none
+
+/**
+ * Output 8-bit to UART0 serial port
+ * @param data is an 8-bit ASCII character to be transferred
+ * @return none
+ * @brief output character to UART0
+ */
 void UART_OutChar(char data);
 
-//------------UART_OutString------------
-// Output String (NULL termination)
-// Input: pointer to a NULL-terminated string to be transferred
-// Output: none
+
+/**
+ * Output String with NULL termination
+ * @param pt is pointer to a NULL-terminated string to be transferred
+ * @return none
+ * @brief output string to UART0
+ */
 void UART_OutString(char *pt);
 
-//------------UART_InUDec------------
-// InUDec accepts ASCII input in unsigned decimal format
-//     and converts to a 32-bit unsigned number
-//     valid range is 0 to 4294967295 (2^32-1)
-// Input: none
-// Output: 32-bit unsigned number
-// If you enter a number above 4294967295, it will return an incorrect value
-// Backspace will remove last digit typed
+
+/**
+ * InUDec accepts ASCII input in unsigned decimal format
+ * and converts to a 32-bit unsigned number
+ * valid range is 0 to 4294967295 (2^32-1)
+ * @param none
+ * @return 32-bit unsigned number
+ * @note If you enter a number above 4294967295, it will return an incorrect value
+ * Backspace will remove last digit typed
+ * @brief input a number from UART0
+ */
 uint32_t UART_InUDec(void);
 
-//-----------------------UART_OutUDec-----------------------
-// Output a 32-bit number in unsigned decimal format
-// Input: 32-bit number to be transferred
-// Output: none
-// Variable format 1-10 digits with no space before or after
+/**
+ * Output a 32-bit number in unsigned decimal format
+ * @param n 32-bit unsigned number to be transferred
+ * @return none
+ * @note Variable format 1-10 digits with no space before or after
+ * @brief output a number to UART0
+ */
 void UART_OutUDec(uint32_t n);
 
-//---------------------UART_InUHex----------------------------------------
-// Accepts ASCII input in unsigned hexadecimal (base 16) format
-// Input: none
-// Output: 32-bit unsigned number
-// No '$' or '0x' need be entered, just the 1 to 8 hex digits
-// It will convert lower case a-f to uppercase A-F
-//     and converts to a 16 bit unsigned number
-//     value range is 0 to FFFFFFFF
-// If you enter a number above FFFFFFFF, it will return an incorrect value
-// Backspace will remove last digit typed
+/**
+ * Output a 32-bit number in signed decimal format
+ * @param n 32-bit signed number to be transferred
+ * @return none
+ * @note Variable format 1-10 digits with no space before or after
+ * @brief output a signed number to UART0
+ */
+void UART_OutSDec(int32_t n);
+
+/**
+ * Accepts ASCII input in unsigned hexadecimal (base 16) format
+ * No '$' or '0x' need be entered, just the 1 to 8 hex digits
+ * It will convert lower case a-f to uppercase A-F
+ * and converts to a 16 bit unsigned number
+ * value range is 0 to FFFFFFFF
+ * If you enter a number above FFFFFFFF, it will return an incorrect value
+ * Backspace will remove last digit typed 
+ * @param none
+ * @return 32-bit unsigned number
+ * @brief input a hex number from UART0
+ */
 uint32_t UART_InUHex(void);
 
-//--------------------------UART_OutUHex----------------------------
-// Output a 32-bit number in unsigned hexadecimal format
-// Input: 32-bit number to be transferred
-// Output: none
-// Variable format 1 to 8 digits with no space before or after
+/**
+ * Output a 32-bit number in unsigned hexadecimal format
+ * @param number 32-bit unsigned number to be transferred
+ * @return none
+ * @note Variable format 1 to 8 digits with no space before or after
+ * @brief output a hex number to UART0
+ */
 void UART_OutUHex(uint32_t number);
 
-//--------------------------UART_OutUHex2----------------------------
-// Output a 32-bit number in unsigned hexadecimal format
-// Input: 32-bit number to be transferred
-// Output: none
-// Fixed format 2 digits with no space before or after
-void UART_OutUHex2(uint32_t number);
+/**
+ * Accepts ASCII characters from the serial port
+ *    and adds them to a string until <enter> is typed
+ *    or until max length of the string is reached.
+ * It echoes each character as it is inputted.
+ * If a backspace is inputted, the string is modified
+ *     and the backspace is echoed
+ *  terminates the string with a null character
+ * Calls UART_InChar
+ * @param bufPt is a pointer to empty buffer, 
+ * @param max is the size of the buffer
+ * @return none
+ * @note Modified by Agustinus Darmawan + Mingjie Qiu --
+ * @brief input a string from UART0
+ */
+ void UART_InString(char *bufPt, uint16_t max);
 
-//------------UART_InString------------
-// Accepts ASCII characters from the serial port
-//    and adds them to a string until <enter> is typed
-//    or until max length of the string is reached.
-// It echoes each character as it is inputted.
-// If a backspace is inputted, the string is modified
-//    and the backspace is echoed
-// terminates the string with a null character
-// uses busy-waiting synchronization on RDRF
-// Input: pointer to empty buffer, size of buffer
-// Output: Null terminated string
-// -- Modified by Agustinus Darmawan + Mingjie Qiu --
-void UART_InString(char *bufPt, uint16_t max);
+/**
+ * Initialize the UART for 115,200 baud rate (assuming 48 MHz bus clock),
+ * 8 bit word length, no parity bits, one stop bit.
+ * Calls UART_Init()
+ * @param none
+ * @return none
+ * @brief Initialize UART0 to use printf
+ */
+void UART_InitPrintf(void);
 
-//------------Output_Init------------
-// Initialize the UART for 115,200 baud rate (assuming 16 MHz bus clock),
-// 8 bit word length, no parity bits, one stop bit, FIFOs enabled
-// Input: none
-// Output: none
-void Output_Init(void);
 
+/**
+ * initialize UART1 for 115200 baud rate.
+ * - PA8 = UART1 Tx out from MSPM0
+ * - PA9 = UART1 Rx in to MSPM0
+ *
+ * @param none
+ * @return none
+ * @brief  Initialize UART1
+*/
+void UART1_Init(void);
+
+/**
+ * Wait for new UART1 serial port input
+ * @param none
+ * @return char ASCII code for key typed
+ * @brief input from UART1
+ */
+char UART1_InChar(void);
+
+/**
+ * Output 8-bit to UART1 serial port
+ * @param data is an 8-bit ASCII character to be transferred
+ * @return none
+ * @brief output character to UART1
+ */
+void UART1_OutChar(char data);
+
+
+#endif // __UART_H__
+/** @}*/

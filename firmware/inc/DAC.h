@@ -1,48 +1,55 @@
+/*!
+ * @defgroup DAC
+ * @brief Digital to analog conversion
+ <table>
+<caption id="DACpins">DAC pin on the MSPM0G3507</caption>
+<tr><th>Pin  <th>Description
+<tr><td>PA15 <td>DAC digital to analog output
+</table>
+ * @{*/
 /**
- * @file DAC.h
- * @author your name (you@domain.com)
- * @brief Low level driver for the DAC. Documentation comments are specifically
- *        for the TLV5618 12-bit SPI DAC. Modify for your particular DAC.
- * @version 0.3.0
- * @date 2023-02-14
- * 
- * @copyright Copyright (c) 2023
- * @note TLV5618 Reference datasheet: 
- *       https://www.ti.com/lit/ds/symlink/tlv5618a.pdf?ts=1676400608127&ref_url=https%253A%252F%252Fwww.google.com%252F
- */
-#pragma once
-#include <stdint.h>
+ * @file      DAC.h
+ * @brief     Initialize 12-bit built-in DAC
+ * @details   DAC output, 12-bit precision<br>
+ * The DAC range is 0 to 2.5V.<br>
+
+ * @version   ECE319K v1.2
+ * @author    Daniel Valvano and Jonathan Valvano
+ * @copyright Copyright 2025 by Jonathan W. Valvano, valvano@mail.utexas.edu,
+ * @warning   AS-IS
+ * @note      For more information see  http://users.ece.utexas.edu/~valvano/
+ * @date      December 23, 2024
+ <table>
+<caption id="DACpins2">DAC pin on the MSPM0G3507</caption>
+<tr><th>Pin  <th>Description
+<tr><td>PA15 <td>DAC digital to analog output
+</table>
+  ******************************************************************************/
+
+
+#ifndef __DAC_H__
+#define __DAC_H__
+
 
 /**
- * TODO: THIS
- * @brief Design your driver here! There are two things your driver needs to do:
- *
- * 1. Initialize SPI for your specific hardware (see page 965 on the TM4C
- *    datasheet).
- * 2. Accept a digital value (from 0 to (2^12 - 1)) and output a 16-bit data
- *    word via SPI that will be sent to the chip (see page 12 on the TLV5618
- *    datasheet).
- * 
- * Provided are two possible function declarations. You may modify this based on
- * your implementation and API design.
+ * Initialize 12-bit DAC output on PA15 
+ * @param none
+ * @return none 
+ * @see DAC_Out()
+ * @brief  Initialize 12-bit DAC
+ * @note Range is 0 to 2.5V
  */
-
-
+void DAC_Init(void);
+ 
+ 
 /**
- * @brief dac_init initializes SPI at pins <TODO: STATE PINS HERE> to
- *        communicate with the TLV5618 12-bit SPI DAC.
- * 
- * @return int 0 if initialization was successful or a positive integer if an
- *         error occurred. <TODO: LIST ERROR CODES AND POSSIBLE ERROR EVENTS>
+ * Output to 12-bit DAC, 0 to 2.5V range
+ * @param data is 12-bit data
+ * @return none 
+ * @see DAC_Init()
+ * @brief  Output to DAC
  */
-int dac_init();
+void DAC_Out(uint32_t data);
 
-/**
- * @brief dac_output tells the DAC to output a specified voltage.
- * 
- * @param data 12-bit data value representing the voltage that should be output
- *        to the TLV5618.
- * @return int 0 if initialization was successful or a positive integer if an
- *         error occurred. <TODO: LIST ERROR CODES AND POSSIBLE ERROR EVENTS>
- */
-int dac_output(uint16_t data);
+#endif
+/** @}*/

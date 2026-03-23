@@ -1,325 +1,256 @@
-// *****************TExaS.c**************
-// TExaS uses Timer5 and UART0
-// Open version of TExaS
-// analog scope on PD3, PD2, PE2 or PB5 using ADC1
-// logic analyzer on Port A, B, C, E or F
-// Daniel and Jonathan Valvano
-// Jan 25, 2021
+/* TExaS.c
+ * Jonathan Valvano
+ * January 12, 2026
+ * Derived from adc12_single_conversion_vref_internal_LP_MSPM0G3507_nortos_ticlang
+ *              adc12_single_conversion_LP_MSPM0G3507_nortos_ticlang
 
-/* This example accompanies the books
-   "Embedded Systems: Real Time Interfacing to ARM Cortex M Microcontrollers",
-   ISBN: 978-1463590154, Jonathan Valvano, copyright (c) 2021
-
-   "Embedded Systems: Real-Time Operating Systems for ARM Cortex-M Microcontrollers",
-   ISBN: 978-1466468863, Jonathan Valvano, copyright (c) 2021
-
- Copyright 2022 by Jonathan W. Valvano, valvano@mail.utexas.edu
-    You may use, edit, run or distribute this file
-    as long as the above copyright notice remains
- THIS SOFTWARE IS PROVIDED "AS IS".  NO WARRANTIES, WHETHER EXPRESS, IMPLIED
- OR STATUTORY, INCLUDING, BUT NOT LIMITED TO, IMPLIED WARRANTIES OF
- MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE APPLY TO THIS SOFTWARE.
- VALVANO SHALL NOT, IN ANY CIRCUMSTANCES, BE LIABLE FOR SPECIAL, INCIDENTAL,
- OR CONSEQUENTIAL DAMAGES, FOR ANY REASON WHATSOEVER.
- For more information about my classes, my research, and my books, see
- http://users.ece.utexas.edu/~valvano/
  */
 
-
-#include <stdint.h>
-#include "../inc/CortexM.h"
-#include "../inc/tm4c123gh6pm.h"
+#include <ti/devices/msp/msp.h>
 #include "../inc/TExaS.h"
-#include "../inc/PLL.h"
-
-
-void Scope(void){  // called 10k/sec
-  UART0_DR_R = (ADC1_SSFIFO3_R>>4); // send ADC to TExaSdisplay
+#include "../inc/Timer.h"
+#include "../inc/Clock.h"
+// PA27 ADC0 channel 0 J1.8 also MKII light interrupt
+// PA26 ADC0 channel 1 J1.5 Joystick select button
+// PA25 ADC0 channel 2 J1.2 MKII Joystick X
+// PA24 ADC0 channel 3 J3.27 ***free***
+// PB25 ADC0 channel 4 J19.7 (insert 0ohm R74, no U3 OPA2365)
+// PB24 ADC0 channel 5 J1.6 MKII microphone in
+// PB20 ADC0 channel 6 J4.36 ***free***
+// PA22 ADC0 channel 7 J24 MKII Accelerometer Y
+//
+// PA15 ADC1 channel 0 J3.30 (also DACout)
+// PA16 ADC1 channel 1 J3.29 ***free***
+// PA17 ADC1 channel 2 J3.28 ***free***
+// PA18 ADC1 channel 3 J3.26 MKII Joystick Y
+// PB17 ADC1 channel 4 J2.18 ***free***
+// PB18 ADC1 channel 5 J3.25 MKII Accelerometer Z
+// PB19 ADC1 channel 6 J3.23 MKII Accelerometer X
+// PA21 ADC1 channel 7 J17.8 (insert R20, remove R3)
+// for logic analyzer, create a TEXAS_LOGIC macro to read any 7bit digital measurement, add bit7=1
+#define PAoutPin0Bit0 (GPIOA->DOUT31_0&1)
+#define PBoutPin22Bit1 (((GPIOB->DOUT31_0&(1<<22))>>21))
+#define PBoutPin26Bit2 (((GPIOB->DOUT31_0&(1<<26))>>24))
+#define PBoutPin27Bit3 (((GPIOB->DOUT31_0&(1<<27))>>24))
+#define PAinPin18Bit4 (((GPIOA->DIN31_0&(1<<18))>>14))
+#define PBinPin21Bit5 (((GPIOB->DIN31_0&(1<<21))>>16))
+// the following configures logic analyzer for PB21,PA18,PB27,PB26,PB22,PA0 (40 instructions, 2us, 2%overhead)
+uint8_t TExaS_LaunchPadLogic(void){
+  return (0x80|PBinPin21Bit5|PAinPin18Bit4|PBoutPin27Bit3|PBoutPin26Bit2|PBoutPin22Bit1|PAoutPin0Bit0);
 }
-// ------------PeriodicTask2_Init------------
-// Activate an interrupt to run a user task periodically.
-// Give it a priority 0 to 6 with lower numbers
-// signifying higher priority.  Equal priority is
-// handled sequentially.
-// Input:  task is a pointer to a user function
-//         Bus clock frequency in Hz
-//         freq is number of interrupts per second
-//           1 Hz to 10 kHz
-//         priority is a number 0 to 6
-// Output: none
-void (*PeriodicTask5)(void);   // user function
-void Timer5A_Init(void(*task)(void), 
-  uint32_t busfrequency, uint32_t freq, uint8_t priority){long sr;
-  if((freq == 0) || (freq > 10000)){
-    return;                        // invalid input
+// the following configures logic analyzer for PB22,PA0, (16 instructions, 1.5us, 1.5% overhead)
+uint8_t TExaS_PB22PA0Logic(void){
+  return (0x80|PBoutPin22Bit1|PAoutPin0Bit0);
+}
+// the following configures logic analyzer for PA6-PA0 outputs, (11 instructions, 1.5us, 1.5% overhead)
+uint8_t TExaS_PA60Logic(void){
+  return (0x80|(GPIOA->DOUT31_0&0x7F));
+}
+// the following configures logic analyzer for PB18-16 outputs, PB2-0 input
+uint8_t TExaS_PB18PB17PB16PB2PB1PB0Logic(void){
+  return (0x80|((GPIOB->DOUT31_0&0x70000)>>13)|(GPIOB->DIN31_0&0x07));
+}
+
+uint8_t (*TExaSLogic)(void);
+#define ADCVREF_INT  0x200
+// choose internal 2.5V reference for accuracy
+#define ADCVREF_EXT  0x100
+// external reference not tested
+#define ADCVREF_VDDA 0x000
+//choose power line 3.3V reference for 0 to 3.3V range
+
+// Bus frequency set by main program
+// continuous sampling, 8 bit mode
+void ADC_Init(ADC12_Regs *adc12, uint32_t channel, uint32_t reference){
+    // Reset ADC and VREF
+    // RSTCLR
+    //   bits 31-24 unlock key 0xB1
+    //   bit 1 is Clear reset sticky bit
+    //   bit 0 is reset ADC
+  adc12->ULLMEM.GPRCM.RSTCTL = (uint32_t)0xB1000003;
+  if(reference == ADCVREF_INT){
+    VREF->GPRCM.RSTCTL = (uint32_t)0xB1000003;
   }
-  if(priority > 6){
-    priority = 6;
+    // Enable power ADC and VREF
+    // PWREN
+    //   bits 31-24 unlock key 0x26
+    //   bit 0 is Enable Power
+  adc12->ULLMEM.GPRCM.PWREN = (uint32_t)0x26000001;
+  if(reference == ADCVREF_INT){
+    VREF->GPRCM.PWREN = (uint32_t)0x26000001;
   }
-  sr = StartCritical();
-  PeriodicTask5 = task;            // user function
-  // ***************** Timer5 initialization *****************
-  SYSCTL_RCGCTIMER_R |= 0x20;      // 0) activate clock for Timer5
-  while((SYSCTL_PRTIMER_R&0x20) == 0){};// allow time for clock to stabilize
-  TIMER5_CTL_R &= ~TIMER_CTL_TAEN; // 1) disable Timer5A during setup
-                                   // 2) configure for 32-bit timer mode
-  TIMER5_CFG_R = TIMER_CFG_32_BIT_TIMER;
-                                   // 3) configure for periodic mode, default down-count settings
-  TIMER5_TAMR_R = TIMER_TAMR_TAMR_PERIOD;
-                                   // 4) reload value
-  TIMER5_TAILR_R = (busfrequency/freq - 1);
-  TIMER5_TAPR_R = 0;               // 5) bus clock resolution
-                                   // 6) clear TIMER5A timeout flag
-  TIMER5_ICR_R = TIMER_ICR_TATOCINT;
-  TIMER5_IMR_R |= TIMER_IMR_TATOIM;// 7) arm timeout interrupt
-                                   // 8) priority
-  NVIC_PRI23_R = (NVIC_PRI23_R&0xFFFFFF00)|(priority<<5);
-// interrupts enabled in the main program after all devices initialized
-// vector number 108, interrupt number 92
-  NVIC_EN2_R = 1<<28;              // 9) enable IRQ 92 in NVIC
-  TIMER5_CTL_R |= TIMER_CTL_TAEN;  // 10) enable Timer5A 32-b
-  EndCritical(sr);
-}
-
-void Timer5A_Handler(void){
-  TIMER5_ICR_R = TIMER_ICR_TATOCINT;// acknowledge TIMER5A timeout
-  (*PeriodicTask5)();              // execute user task
-}
-
-// ------------PeriodicTask2_Stop------------
-// Deactivate the interrupt running a user task
-// periodically.
-// Input: none
-// Output: none
-void Timer5A_Stop(void){
-  if(SYSCTL_RCGCTIMER_R&0x20){
-    // prevent hardware fault if PeriodicTask2_Init() has not been called
-    TIMER5_ICR_R = TIMER_ICR_TATOCINT;// clear TIMER5A timeout flag
-    NVIC_DIS2_R = 1<<28;           // disable IRQ 92 in NVIC
+  Clock_Delay(24); // time for ADC and VREF to power up
+  adc12->ULLMEM.GPRCM.CLKCFG = 0xA9000000; // SYSOSC
+  // bits 31-24 key=0xA9
+  // bit 5 CCONSTOP= 0 not continuous clock in stop mode
+  // bit 4 CCORUN= 0 not continuous clock in run mode
+  // bit 1-0 0=SYSOSC,1=MCLK,2=HFCLK
+  if(Clock_Freq() > 32000000){
+    adc12->ULLMEM.CLKFREQ = 7; // 7 is 40 MHz
+  }else{
+    adc12->ULLMEM.CLKFREQ = 5; //5 is 32MHz
+  }
+  adc12->ULLMEM.CTL0 = 0x03010000;
+  // bits 26-24 = 011 divide by 8
+  // bit 16 PWRDN=1 for manual, =0 power down on completion, if no pending trigger
+  // bit 0 ENC=0 disable (1 to 0 will end conversion), =1 for enable
+  adc12->ULLMEM.CTL1 = 0x00020000;
+  // bits 30-28 =0  no shift
+  // bits 26-24 =0  no averaging
+  // bit 20 SAMPMODE=0 high phase
+  // bits 17-16 CONSEQ=00 ADC at start will be sampled once, 10 for repeated sampling
+  // bit 8 SC=0 for stop, =1 to software start
+  // bit 0 TRIGSRC=0 software trigger
+  adc12->ULLMEM.CTL2 = 0x00000004;
+  // bits 28-24 ENDADD (which  MEMCTL to end)
+  // bits 20-16 STARTADD (which  MEMCTL to start)
+  // bits 15-11 SAMPCNT (for DMA)
+  // bit 10 FIFOEN=0 disable FIFO
+  // bit 8  DMAEN=0 disable DMA
+  // bits 2-1 RES=00 for 12 bit (=01 for 10bit,=10for 8-bit)
+  // bit 0 DF=0 unsigned formant (1 for signed, left aligned)
+  adc12->ULLMEM.MEMCTL[0] = reference+channel;
+  // bit 28 WINCOMP=0 disable window comparator
+  // bit 24 TRIG trigger policy, =0 for auto next, =1 for next requires trigger
+  // bit 20 BCSEN=0 disable burn out current
+  // bit 16 = AVGEN =0 for no averaging
+  // bit 12 = STIME=0 for SCOMP0
+  // bits 9-8 VRSEL = 10 for internal VREF,(00 for VDDA)
+  // bits 4-0 channel = 0 to 7 available
+  adc12->ULLMEM.SCOMP0 = 0; // 8 sample clocks
+//  adc12->ULLMEM.GEN_EVENT.ICLR |= 0x0100; // clear flag MEMCTL[0]
+  adc12->ULLMEM.GEN_EVENT.IMASK = 0; // no interrupt
+  if(reference == ADCVREF_INT){
+    VREF->CLKSEL = 0x00000008; // bus clock
+    VREF->CLKDIV = 0; // divide by 1
+    VREF->CTL0 = 0x0001;
+  // bit 8 SHMODE = off
+  // bit 7 BUFCONFIG=0 for 2.4 (=1 for 1.4)
+  // bit 0 is enable
+    VREF->CTL2 = 0;
+  // bits 31-16 HCYCLE=0
+    // bits 15-0 SHCYCLE=0
+    while((VREF->CTL1&0x01)==0){}; // wait for VREF to be ready
   }
 }
 
+// start continuous sampling 12-bit ADC
+void ADC_Start(ADC12_Regs *adc12){
+  adc12->ULLMEM.CTL0 |= 0x00000001; // enable conversions
+  adc12->ULLMEM.CTL1 |= 0x00000100; // start ADC
+}
+// return last sample 12-bit ADC
+uint32_t ADC_Data(ADC12_Regs *adc12){
+  return adc12->ULLMEM.MEMRES[0];
+}
 
-#define UART_FR_TXFF            0x00000020  // UART Transmit FIFO Full
-#define UART_FR_RXFE            0x00000010  // UART Receive FIFO Empty
-#define UART_LCRH_WLEN_8        0x00000060  // 8 bit word length
-#define UART_LCRH_FEN           0x00000010  // UART Enable FIFOs
-#define UART_CTL_UARTEN         0x00000001  // UART Enable
-//------------UART_Init------------
+#define PA10INDEX 20
+#define PA11INDEX 21
+// assume 32MHz or 40MHz or 80MHz bus clock
+// initialize UART for 115200 baud rate
+// blind output, no input (yet)
+void UART_Init(void){
+    // RSTCLR to GPIOA and UART0 peripherals
+    //   bits 31-24 unlock key 0xB1
+    //   bit 1 is Clear reset sticky bit
+    //   bit 0 is reset gpio port
+//  GPIOA->GPRCM.RSTCTL = 0xB1000003; // called previously
+  UART0->GPRCM.RSTCTL = 0xB1000003;
+    // Enable power to GPIOA and UART0 peripherals
+    // PWREN
+    //   bits 31-24 unlock key 0x26
+    //   bit 0 is Enable Power
+//  GPIOA->GPRCM.PWREN = (uint32_t)0x26000001;
+  UART0->GPRCM.PWREN = 0x26000001;
+  // configure PA11 PA10 as alternate UART0 function
+  IOMUX->SECCFG.PINCM[PA10INDEX]  = 0x00000082;
+  IOMUX->SECCFG.PINCM[PA11INDEX]  = 0x00040082;
+  Clock_Delay(24); // time for gpio to power up
+  UART0->CLKSEL = 0x08; // bus clock
+  UART0->CLKDIV = 0x00; // no divide
+  UART0->CTL0 &= ~0x01; // disable UART0
+  UART0->CTL0 = 0x00020018;
+   // bit  17    FEN=1    enable FIFO
+   // bits 16-15 HSE=00   16x oversampling
+   // bit  14    CTSEN=0  no CTS hardware
+   // bit  13    RTSEN=0  no RTS hardware
+   // bit  12    RTS=0    not RTS
+   // bits 10-8  MODE=000 normal
+   // bits 6-4   TXE=001  enable TxD
+   // bit  3     RXE=1    enable TxD
+   // bit  2     LBE=0    no loop back
+   // bit  0     ENABLE   0 is disable, 1 to enable
+  if(Clock_Freq() == 40000000){
+      // 20000000/16 = 1,250,000 Hz
+     // Baud = 115200
+      //   1,250,000/115200 = 10.850694
+      //   divider = 10+54/64 = 10.84375
+      UART0->IBRD = 10;
+      UART0->FBRD = 54; // baud =1,250,000/10.84375 = 115,274
+  }else if (Clock_Freq() == 32000000){
+    // 32000000/16 = 2,000,000
+     // Baud = 115200
+      //   2,000,000/115200 = 17.361
+      //   divider = 17+23/64 = 17.359
+    UART0->IBRD = 17;
+    UART0->FBRD = 23;
+  }else if (Clock_Freq() == 80000000){
+     // 40000000/16 = 2,500,000 Hz
+     // Baud = 115200
+      //    2,500,000/115200 = 21.701388
+      //   divider = 21+45/64 = 21.703125
+      UART0->IBRD = 21;
+      UART0->FBRD = 45; // baud =2,500,000/21.703125 = 115,191
+  }else return;
+  UART0->LCRH = 0x00000030;
+   // bits 5-4 WLEN=11 8 bits
+   // bit  3   STP2=0  1 stop
+   // bit  2   EPS=0   parity select
+   // bit  1   PEN=0   no parity
+   // bit  0   BRK=0   no break
+  UART0->CTL0 |= 0x01; // enable UART0
+}
+
+//------------UART_InChar------------
 // Wait for new serial port input
-// Initialize the UART for 115,200 baud rate (assuming busfrequency system clock),
-// 8 bit word length, no parity bits, one stop bit, FIFOs enabled
 // Input: none
-//        bus clock frequency in Hz
-//        baud rate in bps
+// Output: ASCII code for key typed
+char UART_InChar(void){
+  while((UART0->STAT&0x04) == 0x04){}; // wait for input
+  return((char)(UART0->RXDATA));
+}
+//------------UART_OutChar------------
+// Output 8-bit to serial port
+// Input: letter is an 8-bit ASCII character to be transferred
 // Output: none
-void UART_Init(uint32_t busfrequency, uint32_t baud){
-  SYSCTL_RCGCUART_R |= 0x01; // activate UART0
-  SYSCTL_RCGCGPIO_R |= 0x01; // activate port A
-  UART0_CTL_R &= ~UART_CTL_UARTEN;      // disable UART
-  UART0_IBRD_R = busfrequency/16/baud;   
-  UART0_FBRD_R = ((64*(busfrequency%baud))+baud/2)/baud;      
-
-//  UART0_IBRD_R = 43;                    // IBRD = int(80,000,000 / (16 * 115200)) = int(43.402778)
-//  UART0_FBRD_R = 26;                    // FBRD = round(0.402778 * 64) = 26
-                                        // 8 bit word length (no parity bits, one stop bit, FIFOs)
-  UART0_LCRH_R = (UART_LCRH_WLEN_8|UART_LCRH_FEN);
-  UART0_CTL_R |= UART_CTL_UARTEN;       // enable UART
-  GPIO_PORTA_AFSEL_R |= 0x03;           // enable alt funct on PA1-0
-  GPIO_PORTA_DEN_R |= 0x03;             // enable digital I/O on PA1-0
-                                        // configure PA1-0 as UART
-  GPIO_PORTA_PCTL_R = (GPIO_PORTA_PCTL_R&0xFFFFFF00)+0x00000011;
-  GPIO_PORTA_AMSEL_R &= ~0x03;          // disable analog functionality on PA
+void UART_OutChar(char data){
+  while((UART0->STAT&0x80) == 0x80){}; // spin if TxFifo full
+  UART0->TXDATA = data;
 }
+// blind
+#define UART_Out(data) (UART0->TXDATA = data)
 
-
-
-// start conversions, sample always
-// ADC1
-// PD3 Ain4
-// 16-point averaging 125kHz sampling
-void ADC1_InitPD3(void){ volatile unsigned long delay;
-  SYSCTL_RCGCADC_R |= 0x02;       // 1) ADC1 clock
-  SYSCTL_RCGCGPIO_R |= 0x08;      // 2) activate clock for Port D
-  while((SYSCTL_PRGPIO_R&0x08) == 0){};// allow time for clock to stabilize
-  GPIO_PORTD_DIR_R &= ~0x08;      // 3) make PD3 input
-  GPIO_PORTD_AFSEL_R |= 0x08;     // 4) enable alternate function on PD3
-  GPIO_PORTD_DEN_R &= ~0x08;      // 5) disable digital I/O on PD3
-  GPIO_PORTD_AMSEL_R |= 0x08;     // 6) enable analog functionality on PD3
-  for(delay = 0; delay<20; delay++){};  // allow time for clock to stabilize
-  ADC1_PC_R = 0x01;               // 7) 125K rate
-  ADC1_SSPRI_R = 0x0123;          // 8) Sequencer 3 is highest priority
-  ADC1_ACTSS_R = 0x0000;          // 9) disable sample sequencer 3
-  ADC1_EMUX_R |= 0xF000;          // 10) seq3 is always/continuous trigger
-  ADC1_SAC_R = 0x03;              //   8-point average 125kHz/8 = 15,625 Hz
-  ADC1_SSMUX3_R = 4;              // 11) set channel 4
-  ADC1_SSCTL3_R = 0x0006;         // 12) no TS0 D0, yes IE0 END0
-  ADC1_IM_R = 0x0000;             // 13) disable SS3 interrupts
-  ADC1_ACTSS_R = 0x0008;          // 14) enable sample sequencer 3
-}
-
-// start conversions, sample always
-// ADC1
-// PD2 Ain5
-// 16-point averaging 125kHz sampling
-void ADC1_Init_PD2(void){ volatile unsigned long delay;
-  SYSCTL_RCGCADC_R |= 0x02;       // 1) ADC1 clock
-  SYSCTL_RCGCGPIO_R |= 0x08;      // 2) activate clock for Port D
-  while((SYSCTL_PRGPIO_R&0x08) == 0){};// allow time for clock to stabilize
-  GPIO_PORTD_DIR_R &= ~0x04;      // 3) make PD2 input
-  GPIO_PORTD_AFSEL_R |= 0x04;     // 4) enable alternate function on PD2
-  GPIO_PORTD_DEN_R &= ~0x04;      // 5) disable digital I/O on PD2
-  GPIO_PORTD_AMSEL_R |= 0x04;     // 6) enable analog functionality on PD2
-  for(delay = 0; delay<20; delay++){};  // allow time for clock to stabilize
-  ADC1_PC_R = 0x01;               // 7) 125K rate
-  ADC1_SSPRI_R = 0x0123;          // 8) Sequencer 3 is highest priority
-  ADC1_ACTSS_R = 0x0000;          // 9) disable sample sequencer 3
-  ADC1_EMUX_R |= 0xF000;          // 10) seq3 is always/continuous trigger
-  ADC1_SAC_R = 0x03;              //   8-point average 125kHz/8 = 15,625 Hz
-  ADC1_SSMUX3_R = 5;              // 11) set channel 5
-  ADC1_SSCTL3_R = 0x0006;         // 12) no TS0 D0, yes IE0 END0
-  ADC1_IM_R = 0x0000;             // 13) disable SS3 interrupts
-  ADC1_ACTSS_R = 0x0008;          // 14) enable sample sequencer 3
-}
-
-// start conversions, sample always
-// ADC1
-// PE2 Ain1
-// 16-point averaging 125kHz sampling
-void ADC1_Init_PE2(void){ volatile unsigned long delay;
-  SYSCTL_RCGCADC_R |= 0x02;       // 1) ADC1 clock
-  SYSCTL_RCGCGPIO_R |= 0x10;      // 2) activate clock for Port E
-  while((SYSCTL_PRGPIO_R&0x10) == 0){};// allow time for clock to stabilize
-  GPIO_PORTE_DIR_R &= ~0x04;      // 3) make PE2 input
-  GPIO_PORTE_AFSEL_R |= 0x04;     // 4) enable alternate function on PE2
-  GPIO_PORTE_DEN_R &= ~0x04;      // 5) disable digital I/O on PE2
-  GPIO_PORTE_AMSEL_R |= 0x04;     // 6) enable analog functionality on PE2
-  for(delay = 0; delay<20; delay++){};  // allow time for clock to stabilize
-  ADC1_PC_R = 0x01;               // 7) 125K rate
-  ADC1_SSPRI_R = 0x0123;          // 8) Sequencer 3 is highest priority
-  ADC1_ACTSS_R = 0x0000;          // 9) disable sample sequencer 3
-  ADC1_EMUX_R |= 0xF000;          // 10) seq3 is always/continuous trigger
-  ADC1_SAC_R = 0x03;              //   8-point average 125kHz/8 = 15,625 Hz
-  ADC1_SSMUX3_R = 1;              // 11) set channel 1
-  ADC1_SSCTL3_R = 0x0006;         // 12) no TS0 D0, yes IE0 END0
-  ADC1_IM_R = 0x0000;             // 13) disable SS3 interrupts
-  ADC1_ACTSS_R = 0x0008;          // 14) enable sample sequencer 3
-}
-
-// start conversions, sample always
-// ADC1
-// PB5 Ain11
-// 16-point averaging 125kHz sampling
-void ADC1_Init_PB5(void){ volatile unsigned long delay;
-  SYSCTL_RCGCADC_R |= 0x02;       // 1) ADC1 clock
-  SYSCTL_RCGCGPIO_R |= 0x02;      // 2) activate clock for Port B
-  while((SYSCTL_PRGPIO_R&0x02) == 0){};// allow time for clock to stabilize
-  GPIO_PORTB_DIR_R &= ~0x20;      // 3) make PB5 input
-  GPIO_PORTB_AFSEL_R |= 0x20;     // 4) enable alternate function on PB5
-  GPIO_PORTB_DEN_R &= ~0x20;      // 5) disable digital I/O on PB5
-  GPIO_PORTB_AMSEL_R |= 0x20;     // 6) enable analog functionality on PB5
-  for(delay = 0; delay<20; delay++){};  // allow time for clock to stabilize
-  ADC1_PC_R = 0x01;               // 7) 125K rate
-  ADC1_SSPRI_R = 0x0123;          // 8) Sequencer 3 is highest priority
-  ADC1_ACTSS_R = 0x0000;          // 9) disable sample sequencer 3
-  ADC1_EMUX_R |= 0xF000;          // 10) seq3 is always/continuous trigger
-  ADC1_SAC_R = 0x03;              //   8-point average 125kHz/8 = 15,625 Hz
-  ADC1_SSMUX3_R = 11;             // 11) set channel 11
-  ADC1_SSCTL3_R = 0x0006;         // 12) no TS0 D0, yes IE0 END0
-  ADC1_IM_R = 0x0000;             // 13) disable SS3 interrupts
-  ADC1_ACTSS_R = 0x0008;          // 14) enable sample sequencer 3
-}
-
-// 1 for PA7-2 logic analyzer A
-#define PA72       (*((volatile uint32_t *)0x400043F0))
-void LogicAnalyzerA(void){  // called 10k/sec
-  UART0_DR_R = (PA72>>2)|0x80;   // send data to TExaSdisplay
-}
-// 2 for PB6-0 logic analyzer B
-#define PB60       (*((volatile uint32_t *)0x400051FC))
-void LogicAnalyzerB(void){  // called 10k/sec
-  UART0_DR_R = PB60|0x80;   // send data to TExaSdisplay
-}
-// 3 for PC7-4 logic analyzer C
-#define PC74       (*((volatile uint32_t *)0x400063C0))
-void LogicAnalyzerC(void){  // called 10k/sec
-  UART0_DR_R = (PC74>>4)|0x80;   // send data to TExaSdisplay
-}
-// 4 for PE5-0 logic analyzer E
-void LogicAnalyzerE(void){  // called 10k/sec
-  UART0_DR_R = GPIO_PORTE_DATA_R|0x80;   // send data to TExaSdisplay
-}
-// 4 for PF4-0 logic analyzer F
-void LogicAnalyzerF(void){  // called 10k/sec
-  UART0_DR_R = GPIO_PORTF_DATA_R|0x80;   // send data to TExaSdisplay
-}
-
-// ************TExaS_Init*****************
-// Initialize grader, triggered by periodic timer
-// This needs to be called once
-// Inputs: Scope or Logic analyzer
-//         Bus clock frequency in Hz
-// Outputs: none
-void TExaS_Init(enum TExaSmode mode){
-  // 10 kHz periodic interrupt
-  PLL_Init(Bus80MHz);
-  UART_Init(80000000,115200);
-
-
-  if(mode == LOGICANALYZERA){
-  // enable 10k periodic interrupt if logic analyzer mode
-   SYSCTL_RCGCGPIO_R |= 0x01; // port A needs to be on
-   Timer5A_Init(&LogicAnalyzerA,80000000,10000,5); // run logic analyzer
-   EnableInterrupts();
-  }
-  if(mode == LOGICANALYZERB){
-  // enable 10k periodic interrupt if logic analyzer mode
-   SYSCTL_RCGCGPIO_R |= 0x02; // port B needs to be on
-   Timer5A_Init(&LogicAnalyzerB,80000000,10000,5); // run logic analyzer
-   EnableInterrupts();
-  }
-  if(mode == LOGICANALYZERC){
-  // enable 10k periodic interrupt if logic analyzer mode
-   SYSCTL_RCGCGPIO_R |= 0x04; // port C needs to be on
-   Timer5A_Init(&LogicAnalyzerC,80000000,10000,5); // run logic analyzer
-   EnableInterrupts();
-  }
-  if(mode == LOGICANALYZERE){
-  // enable 10k periodic interrupt if logic analyzer mode
-   SYSCTL_RCGCGPIO_R |= 0x10; // port E needs to be on
-   Timer5A_Init(&LogicAnalyzerE,80000000,10000,5); // run logic analyzer
-   EnableInterrupts();
-  }
-  if(mode == LOGICANALYZERF){
-  // enable 10k periodic interrupt if logic analyzer mode
-   SYSCTL_RCGCGPIO_R |= 0x20; // port F needs to be on
-   Timer5A_Init(&LogicAnalyzerF,80000000,10000,5); // run logic analyzer
-   EnableInterrupts();
-  }
-  if(mode == SCOPE){
-    ADC1_InitPD3();  // activate PD3 as analog input
-    Timer5A_Init(&Scope,80000000,10000,5); // run scope at 10k
-  }
-  if(mode == SCOPE_PD2){
-    ADC1_Init_PD2();  // activate PD2 as analog input
-    Timer5A_Init(&Scope,80000000,10000,5); // run scope at 10k
-  }
-  if(mode == SCOPE_PE2){
-    ADC1_Init_PE2();  // activate PE2 as analog input
-    Timer5A_Init(&Scope,80000000,10000,5); // run scope at 10k
-  }
-  if(mode == SCOPE_PB5){
-    ADC1_Init_PB5();  // activate PB5 as analog input
-    Timer5A_Init(&Scope,80000000,10000,5); // run scope at 10k
+#define ADC_In(adc12) ((adc12)->ULLMEM.MEMRES[0])
+ADC12_Regs *TExaSadc;
+uint32_t test=0;
+void TIMG7_IRQHandler(void){
+  TIMG7->GEN_EVENT0.ICLR = 1; //acknowledge
+// UART_Out(test); test =( test+1)&0xFF;
+//  GPIOA->DOUTTGL31_0 = 1;
+  if(TExaSadc){
+    UART_Out(ADC_In(TExaSadc)); // 8-bit data at 10 kHz
+  }else{
+    UART_Out((*TExaSLogic)()); // 7-bit digital data at 10 kHz
   }
 }
-
-
-
-// ************TExaS_Stop*****************
-// Stop the transfer
-// Inputs:  none
-// Outputs: none
-void TExaS_Stop(void){
-  Timer5A_Stop();
+void TExaS_Init(ADC12_Regs *adc12, uint32_t channel, uint8_t (*logic)(void)){
+  TExaSadc = adc12;
+  TExaSLogic = logic;
+  if(TExaSadc){
+    ADC_Init(adc12,channel,ADCVREF_VDDA);
+    ADC_Start(adc12);
+  }
+  UART_Init();
+  TimerG7_IntArm(Clock_Freq()/10000,1,3); // G7 is in Power domain PD2
 }
+

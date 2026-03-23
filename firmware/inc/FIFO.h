@@ -1,106 +1,125 @@
-// FIFO.h
-// Runs on any LM3Sxxx
-// Provide functions that initialize a FIFO, put data in, get data out,
-// and return the current size.  The file provides macro templates for
-// instantiation of either index or pointer implementation FIFOs.
-// Daniel Valvano
-// June 16, 2011
+/*!
+ * @defgroup FIFO
+ * @brief First in first out queue
+ * @{*/
+/**
+ * @file      FIFO.h
+ * @brief     Provide functions for a first in first out queue
+ * @details   Runs on any Microcontroller.
+ * Provide functions that initialize a FIFO, put data in, get data out,
+ * and return the current size.  The file includes two FIFOs
+ * using index implementation.  
+ * @version   ECE319K v1.2
+ * @author    Daniel Valvano and Jonathan Valvano
+ * @copyright Copyright 2023 by Jonathan W. Valvano, valvano@mail.utexas.edu,
+ * @warning   AS-IS
+ * @note      For more information see  http://users.ece.utexas.edu/~valvano/
+ * @date      December 23, 2024
 
-/* This example accompanies the book
-   "Embedded Systems: Real Time Interfacing to Arm Cortex M Microcontrollers",
-   ISBN: 978-1463590154, Jonathan Valvano, copyright (c) 2015
-      Programs 3.7, 3.8., 3.9 and 3.10 in Section 3.7
-
- Copyright 2015 by Jonathan W. Valvano, valvano@mail.utexas.edu
-    You may use, edit, run or distribute this file
-    as long as the above copyright notice remains
- THIS SOFTWARE IS PROVIDED "AS IS".  NO WARRANTIES, WHETHER EXPRESS, IMPLIED
- OR STATUTORY, INCLUDING, BUT NOT LIMITED TO, IMPLIED WARRANTIES OF
- MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE APPLY TO THIS SOFTWARE.
- VALVANO SHALL NOT, IN ANY CIRCUMSTANCES, BE LIABLE FOR SPECIAL, INCIDENTAL,
- OR CONSEQUENTIAL DAMAGES, FOR ANY REASON WHATSOEVER.
- For more information about my classes, my research, and my books, see
- http://users.ece.utexas.edu/~valvano/
  */
+
+
 
 #ifndef __FIFO_H__
 #define __FIFO_H__
 
 
-// macro to create an index FIFO
-#define AddIndexFifo(NAME,SIZE,TYPE,SUCCESS,FAIL) \
-uint32_t volatile NAME ## PutI;         \
-uint32_t volatile NAME ## GetI;         \
-TYPE static NAME ## Fifo [SIZE];        \
-void NAME ## Fifo_Init(void){           \
-  NAME ## PutI = NAME ## GetI = 0;      \
-}                                       \
-int NAME ## Fifo_Put (TYPE data){       \
-  if(( NAME ## PutI - NAME ## GetI ) & ~(SIZE-1)){  \
-    return(FAIL);                       \
-  }                                     \
-  NAME ## Fifo[ NAME ## PutI &(SIZE-1)] = data; \
-  NAME ## PutI++;                       \
-  return(SUCCESS);                      \
-}                                       \
-int NAME ## Fifo_Get (TYPE *datapt){    \
-  if( NAME ## PutI == NAME ## GetI ){   \
-    return(FAIL);                       \
-  }                                     \
-  *datapt = NAME ## Fifo[ NAME ## GetI &(SIZE-1)];  \
-  NAME ## GetI++;                       \
-  return(SUCCESS);                      \
-}                                       \
-unsigned short NAME ## Fifo_Size (void){\
- return ((unsigned short)( NAME ## PutI - NAME ## GetI ));  \
-}
-// e.g.,
-// AddIndexFifo(Tx,32,unsigned char, 1,0)
-// SIZE must be a power of two
-// creates TxFifo_Init() TxFifo_Get() and TxFifo_Put()
+/**
+ * \brief TXFIFOSIZE the size of the transmit FIFO, which can hold 0 to TXFIFOSIZE-1 elements.
+ * The size must be a power of 2.
+ */
+ #define TXFIFOSIZE 64 // must be a power of 2
 
-// macro to create a pointer FIFO
-#define AddPointerFifo(NAME,SIZE,TYPE,SUCCESS,FAIL) \
-TYPE volatile *NAME ## PutPt;           \
-TYPE volatile *NAME ## GetPt;           \
-TYPE static NAME ## Fifo [SIZE];        \
-void NAME ## Fifo_Init(void){           \
-  NAME ## PutPt = NAME ## GetPt = &NAME ## Fifo[0]; \
-}                                       \
-int NAME ## Fifo_Put (TYPE data){       \
-  TYPE volatile *nextPutPt;             \
-  nextPutPt = NAME ## PutPt + 1;        \
-  if(nextPutPt == &NAME ## Fifo[SIZE]){ \
-    nextPutPt = &NAME ## Fifo[0];       \
-  }                                     \
-  if(nextPutPt == NAME ## GetPt ){      \
-    return(FAIL);                       \
-  }                                     \
-  else{                                 \
-    *( NAME ## PutPt ) = data;          \
-    NAME ## PutPt = nextPutPt;          \
-    return(SUCCESS);                    \
-  }                                     \
-}                                       \
-int NAME ## Fifo_Get (TYPE *datapt){    \
-  if( NAME ## PutPt == NAME ## GetPt ){ \
-    return(FAIL);                       \
-  }                                     \
-  *datapt = *( NAME ## GetPt++);        \
-  if( NAME ## GetPt == &NAME ## Fifo[SIZE]){ \
-    NAME ## GetPt = &NAME ## Fifo[0];   \
-  }                                     \
-  return(SUCCESS);                      \
-}                                       \
-unsigned short NAME ## Fifo_Size (void){\
-  if( NAME ## PutPt < NAME ## GetPt ){  \
-    return ((unsigned short)( NAME ## PutPt - NAME ## GetPt + (SIZE*sizeof(TYPE)))/sizeof(TYPE)); \
-  }                                     \
-  return ((unsigned short)( NAME ## PutPt - NAME ## GetPt )/sizeof(TYPE)); \
-}
-// e.g.,
-// AddPointerFifo(Rx,32,unsigned char, 1,0)
-// SIZE can be any size
-// creates RxFifo_Init() RxFifo_Get() and RxFifo_Put()
+
+/**
+ * Initialize the transmit FIFO 
+ * @param none
+ * @return none
+ * @see TxFifo_Put() TxFifo_Get() TxFifo_Size()
+ * @brief  Initialize FIFO
+ * @note TXFIFOSIZE the size of the transmit FIFO
+ */
+void TxFifo_Init(void);
+
+
+/**
+ * Put character into the transmit FIFO 
+ * @param data is a new character to save
+ * @return 0 for fail because full, 1 for success
+ * @see TxFifo_Init() TxFifo_Get() TxFifo_Size()
+ * @brief Put FIFO
+ * @note TXFIFOSIZE the size of the transmit FIFO
+ */
+int TxFifo_Put(char data);
+
+
+/**
+ * Get character from the transmit FIFO 
+ * @param none
+ * @return 0 for fail because empty, nonzero is data
+ * @see TxFifo_Init() TxFifo_Put() TxFifo_Size()
+ * @brief Get FIFO
+ * @note TXFIFOSIZE the size of the transmit FIFO
+ */
+char TxFifo_Get(void);
+
+
+/**
+ * Determine how many elements are currently stored in the transmit FIFO 
+ * @param none
+ * @return number of elements in FIFO
+ * @see TxFifo_Init() TxFifo_Put() TxFifo_Get()
+ * @brief number of elements in FIFO
+ * @note Does not change the FIFO
+ */
+uint32_t TxFifo_Size(void);
+
+
+/**
+ * \brief RXFIFOSIZE the size of the receive FIFO, which can hold 0 to RXFIFOSIZE-1 elements
+ * The size must be a power of 2.
+ */
+#define RXFIFOSIZE 16 // must be a power of 2
+
+/**
+ * Initialize the receive FIFO 
+ * @param none
+ * @return none
+ * @see RxFifo_Put() RxFifo_Get() RxFifo_Size()
+ * @brief  Initialize FIFO
+ * @note RXFIFOSIZE the size of the receive FIFO
+ */
+void RxFifo_Init(void);
+
+/**
+ * Put character into the receive FIFO 
+ * @param data is a new character to save
+ * @return 0 for fail because full, 1 for success
+ * @see RxFifo_Init() RxFifo_Get() RxFifo_Size()
+ * @brief Put FIFO
+ * @note RXFIFOSIZE the size of the receive FIFO
+ */
+int RxFifo_Put(char data);
+
+/**
+ * Get character from the receive FIFO 
+ * @param none
+ * @return 0 for fail because empty, nonzero is data
+ * @see RxFifo_Init() RxFifo_Put() RxFifo_Size()
+ * @brief Get FIFO
+ * @note RXFIFOSIZE the size of the receive FIFO
+ */
+char RxFifo_Get(void);
+
+/**
+ * Determine how many elements are currently stored in the receive FIFO 
+ * @param none
+ * @return number of elements in FIFO
+ * @see RxFifo_Init() RxFifo_Put() RxFifo_Get()
+ * @brief number of elements in FIFO
+ * @note Does not change the FIFO
+ */
+uint32_t RxFifo_Size(void);
 
 #endif //  __FIFO_H__
+/** @}*/

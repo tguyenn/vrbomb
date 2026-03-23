@@ -17,25 +17,19 @@
  ****************************************************/
 
 // ST7735.c
-// Runs on LM4F120/TM4C123
+// Runs on MSPM0G3507
 // Low level drivers for the ST7735 160x128 LCD based off of
 // the file described above.
 //    16-bit color, 128 wide by 160 high LCD
 // Daniel Valvano
-// May 28, 2023
+// May 29, 2023
 // Augmented 7/17/2014 to have a simple graphics facility
 // Tested with LaunchPadDLL.dll simulator 9/2/2014
 // Modified for use of CS (simultaneous with other SPI slaves) 3/28/2016
 
-/* This example accompanies the books
-   "Embedded Systems: Introduction to ARM Cortex M Microcontrollers",
-      ISBN: 978-1469998749, Jonathan Valvano, copyright (c) 2020
-   "Embedded Systems: Real Time Interfacing to ARM Cortex M Microcontrollers",
-      ISBN: 978-1463590154, Jonathan Valvano, copyright (c) 2024
-   "Embedded Systems: Real-Time Operating Systems for ARM Cortex-M Microcontrollers",
-      ISBN: 978-1466468863, Jonathan Valvano, copyright (c) 2020
+/*
 
- Copyright 2020 by Jonathan W. Valvano, valvano@mail.utexas.edu
+ Copyright 2023 by Jonathan W. Valvano, valvano@mail.utexas.edu
     You may use, edit, run or distribute this file
     as long as the above copyright notice remains
  THIS SOFTWARE IS PROVIDED "AS IS".  NO WARRANTIES, WHETHER EXPRESS, IMPLIED
@@ -50,166 +44,90 @@
 // hardware connections
 // **********ST7735 TFT and SDC*******************
 // ST7735
-// Backlight (pin 10) connected to +3.3 V
-// MISO (pin 9) unconnected
-// SCK (pin 8) connected to PA2 (SSI0Clk)
-// MOSI (pin 7) connected to PA5 (SSI0Tx)
-// TFT_CS (pin 6) connected to PA3 (SSI0Fss)
-// CARD_CS (pin 5) unconnected
-// Data/Command (pin 4) connected to PA6 (GPIO), high for data, low for command
-// RESET (pin 3) connected to PA7 (GPIO)
-// VCC (pin 2) connected to +3.3 V
-// Gnd (pin 1) connected to ground
+// Backlight (pin 10)     to +3.3 V
+// MISO (pin 9) (NC)
+// SCK (pin 8)            to SPI1 SCLK: PB9
+// MOSI (pin 7)           to SPI1 PICO: PB8
+// TFT_CS (pin 6)         to SPI1 CS0:  PB6
+// CARD_CS (pin 5) (NC)
+// Data/Command (pin 4)   to PA13 (GPIO), high for data, low for command
+// RESET (pin 3)          to PB15 (GPIO)
+// VCC (pin 2)            to +3.3 V
+// Gnd (pin 1)            to ground
 
 // **********wide.hk ST7735R with ADXL345 accelerometer *******************
 // Silkscreen Label (SDC side up; LCD side down) - Connection
 // VCC  - +3.3 V
 // GND  - Ground
-// !SCL - PA2 Sclk SPI clock from microcontroller to TFT or SDC
-// !SDA - PA5 MOSI SPI data from microcontroller to TFT or SDC
-// DC   - PA6 TFT data/command
-// RES  - PA7 TFT reset
-// CS   - PA3 TFT_CS, active low to enable TFT
+// !SCL - SPI1 SCLK: PB9 clock
+// !SDA - SPI1 PICO: PB8 MOSI SPI data from microcontroller to TFT or SDC
+// DC   - GPIO       PA13 TFT data/command
+// RES  - GPIO       PB15 TFT reset
+// CS   - SPI1 CS0:  PB6 TFT_CS, active low to enable TFT
 // *CS  - (NC) SDC_CS, active low to enable SDC
 // MISO - (NC) MISO SPI data from SDC to microcontroller
-// SDA  – (NC) I2C data for ADXL345 accelerometer
-// SCL  – (NC) I2C clock for ADXL345 accelerometer
-// SDO  – (NC) I2C alternate address for ADXL345 accelerometer
+// SDA  - (NC) I2C data for ADXL345 accelerometer
+// SCL  - (NC) I2C clock for ADXL345 accelerometer
+// SDO  - (NC) I2C alternate address for ADXL345 accelerometer
 // Backlight + - Light, backlight connected to +3.3 V
 
 // **********wide.hk ST7735R with ADXL335 accelerometer *******************
 // Silkscreen Label (SDC side up; LCD side down) - Connection
 // VCC  - +3.3 V
 // GND  - Ground
-// !SCL - PA2 Sclk SPI clock from microcontroller to TFT or SDC
-// !SDA - PA5 MOSI SPI data from microcontroller to TFT or SDC
-// DC   - PA6 TFT data/command
-// RES  - PA7 TFT reset
-// CS   - PA3 TFT_CS, active low to enable TFT
+// !SCL - SPI1 SCLK: PB9
+// !SDA - SPI1 PICO: PB8 MOSI SPI data from microcontroller to TFT or SDC
+// DC   - GPIO       PA13 TFT data/command
+// RES  - GPIO       PB15 TFT reset
+// CS   - SPI1 CS0:  PB6 TFT_CS, active low to enable TFT
 // *CS  - (NC) SDC_CS, active low to enable SDC
 // MISO - (NC) MISO SPI data from SDC to microcontroller
-// X– (NC) analog input X-axis from ADXL335 accelerometer
-// Y– (NC) analog input Y-axis from ADXL335 accelerometer
-// Z– (NC) analog input Z-axis from ADXL335 accelerometer
+// Xï¿½ (NC) analog input X-axis from ADXL335 accelerometer
+// Yï¿½ (NC) analog input Y-axis from ADXL335 accelerometer
+// Zï¿½ (NC) analog input Z-axis from ADXL335 accelerometer
 // Backlight + - Light, backlight connected to +3.3 V
 
 // **********HiLetgo ST7735 TFT and SDC (SDC not tested)*******************
 // ST7735
-// LED-   (pin 16) TFT, connected to ground
-// LED+   (pin 15) TFT, connected to +3.3 V
-// SD_CS  (pin 14) SDC, chip select
-// MOSI   (pin 13) SDC, MOSI
-// MISO   (pin 12) SDC, MISO
-// SCK    (pin 11) SDC, serial clock
-// CS     (pin 10) TFT, PA3 (SSI0Fss)
-// SCL    (pin 9)  TFT, SCK  PA2 (SSI0Clk)
-// SDA    (pin 8)  TFT, MOSI PA5 (SSI0Tx)
-// A0     (pin 7)  TFT, Data/Command PA6 (GPIO), high for data, low for command
-// RESET  (pin 6)  TFT, to PA7 (GPIO)
-// NC     (pins 3,4,5) not connected
-// VCC    (pin 2)  connected to +3.3 V
-// GND    (pin 1)  connected to ground
+// LED-   (pin 16) TFT, to ground
+// LED+   (pin 15) TFT, to +3.3 V
+// SD_CS  (pin 14) SDC, to chip select
+// MOSI   (pin 13) SDC, to MOSI
+// MISO   (pin 12) SDC, to MISO
+// SCK    (pin 11) SDC, to serial clock
+// CS     (pin 10) TFT, to PB6  SPI1 CS0
+// SCL    (pin 9)  TFT, to PB9  SPI1 SCLK
+// SDA    (pin 8)  TFT, to PB8  MOSI SPI1 PICO
+// A0     (pin 7)  TFT, to PA13 Data/Command, high for data, low for command
+// RESET  (pin 6)  TFT, to PB15 reset (GPIO), low to reset
+// NC     (pins 3,4,5)
+// VCC    (pin 2)       to +3.3 V
+// GND    (pin 1)       to ground
 
 // Tyenaza Tyenazaqhf72mi9s3
 // ST7735
-// LED (pin 8) connected to +3.3 V
-// SCK (pin 7) connected to PA2 (SSI0Clk)
-// SDA (pin 6) MOSI, connected to PA5 (SSI0Tx)
-// A0  (pin 5) Data/Command connected to PA6 (GPIO), high for data, low for command
-// RESET (pin 4) connected to PA7 (GPIO)
-// CS  (pin 3) connected to PA3 (SSI0Fss)
-// Gnd (pin 2) connected to ground
-// VCC (pin 1) connected to +3.3 V
+// LED (pin 8)              to +3.3 V
+// SCK (pin 7) SCLK         to PB9 SPI1 SCLK
+// SDA (pin 6) MOSI,        to PB8 SPI1 PICO
+// A0  (pin 5) Data/Command to PA13 (GPIO), high for data, low for command
+// RESET (pin 4)            to PB15 (GPIO), low to reset
+// CS  (pin 3)              to PB6 SPI1 CS0:
+// Gnd (pin 2)              to ground
+// VCC (pin 1)              to +3.3 V
 
+#include <ti/devices/msp/msp.h>
+#include "../inc/ST7735.h"
+#include "../inc/SPI.h"
+#include "../inc/Clock.h"
+#include "file.h"
 #include <stdio.h>
-#include <stdint.h>
 #include <stdlib.h>
-#include "ST7735.h"
-#include "../inc/tm4c123gh6pm.h"
 
 // 16 rows (0 to 15) and 21 characters (0 to 20)
 // Requires (11 + size*size*6*8) bytes of transmission for each character
-uint32_t StX=0; // position along the horizonal axis 0 to 20
+uint32_t StX=0; // position along the horizontal axis 0 to 20
 uint32_t StY=0; // position along the vertical axis 0 to 15
 uint16_t StTextColor = ST7735_YELLOW;
-
-#define ST7735_NOP     0x00
-#define ST7735_SWRESET 0x01
-#define ST7735_RDDID   0x04
-#define ST7735_RDDST   0x09
-
-#define ST7735_SLPIN   0x10
-#define ST7735_SLPOUT  0x11
-#define ST7735_PTLON   0x12
-#define ST7735_NORON   0x13
-
-#define ST7735_INVOFF  0x20
-#define ST7735_INVON   0x21
-#define ST7735_DISPOFF 0x28
-#define ST7735_DISPON  0x29
-#define ST7735_CASET   0x2A
-#define ST7735_RASET   0x2B
-#define ST7735_RAMWR   0x2C
-#define ST7735_RAMRD   0x2E
-
-#define ST7735_PTLAR   0x30
-#define ST7735_COLMOD  0x3A
-#define ST7735_MADCTL  0x36
-
-#define ST7735_FRMCTR1 0xB1
-#define ST7735_FRMCTR2 0xB2
-#define ST7735_FRMCTR3 0xB3
-#define ST7735_INVCTR  0xB4
-#define ST7735_DISSET5 0xB6
-
-#define ST7735_PWCTR1  0xC0
-#define ST7735_PWCTR2  0xC1
-#define ST7735_PWCTR3  0xC2
-#define ST7735_PWCTR4  0xC3
-#define ST7735_PWCTR5  0xC4
-#define ST7735_VMCTR1  0xC5
-
-#define ST7735_RDID1   0xDA
-#define ST7735_RDID2   0xDB
-#define ST7735_RDID3   0xDC
-#define ST7735_RDID4   0xDD
-
-#define ST7735_PWCTR6  0xFC
-
-#define ST7735_GMCTRP1 0xE0
-#define ST7735_GMCTRN1 0xE1
-
-#define TFT_CS                  (*((volatile uint32_t *)0x40004020))
-#define TFT_CS_LOW              0           // CS normally controlled by hardware
-#define TFT_CS_HIGH             0x08
-#define DC                      (*((volatile uint32_t *)0x40004100))
-#define DC_COMMAND              0
-#define DC_DATA                 0x40
-#define RESET                   (*((volatile uint32_t *)0x40004200))
-#define RESET_LOW               0
-#define RESET_HIGH              0x80
-
-#define SSI_CR0_SCR_M           0x0000FF00  // SSI Serial Clock Rate
-#define SSI_CR0_SPH             0x00000080  // SSI Serial Clock Phase
-#define SSI_CR0_SPO             0x00000040  // SSI Serial Clock Polarity
-#define SSI_CR0_FRF_M           0x00000030  // SSI Frame Format Select
-#define SSI_CR0_FRF_MOTO        0x00000000  // Freescale SPI Frame Format
-#define SSI_CR0_DSS_M           0x0000000F  // SSI Data Size Select
-#define SSI_CR0_DSS_8           0x00000007  // 8-bit data
-#define SSI_CR1_MS              0x00000004  // SSI Master/Slave Select
-#define SSI_CR1_SSE             0x00000002  // SSI Synchronous Serial Port
-                                            // Enable
-#define SSI_SR_BSY              0x00000010  // SSI Busy Bit
-#define SSI_SR_TNF              0x00000002  // SSI Transmit FIFO Not Full
-#define SSI_CPSR_CPSDVSR_M      0x000000FF  // SSI Clock Prescale Divisor
-#define SSI_CC_CS_M             0x0000000F  // SSI Baud Clock Source
-#define SSI_CC_CS_SYSPLL        0x00000000  // Either the system clock (if the
-                                            // PLL bypass is in effect) or the
-                                            // PLL output (default)
-#define SYSCTL_RCGC1_SSI0       0x00000010  // SSI0 Clock Gating Control
-#define SYSCTL_RCGC2_GPIOA      0x00000001  // port A Clock Gating Control
-#define ST7735_TFTWIDTH  128
-#define ST7735_TFTHEIGHT 160
 
 #define ST7735_NOP     0x00
 #define ST7735_SWRESET 0x01
@@ -590,61 +508,10 @@ static int16_t _width = ST7735_TFTWIDTH;   // this could probably be a constant,
 static int16_t _height = ST7735_TFTHEIGHT;
 
 
-// The Data/Command pin must be valid when the eighth bit is
-// sent.  The SSI module has hardware input and output FIFOs
-// that are 8 locations deep.  Based on the observation that
-// the LCD interface tends to send a few commands and then a
-// lot of data, the FIFOs are not used when writing
-// commands, and they are used when writing data.  This
-// ensures that the Data/Command pin status matches the byte
-// that is actually being transmitted.
-// The write command operation waits until all data has been
-// sent, configures the Data/Command pin for commands, sends
-// the command, and then waits for the transmission to
-// finish.
-// The write data operation waits until there is room in the
-// transmit FIFO, configures the Data/Command pin for data,
-// and then adds the data to the transmit FIFO.
-// NOTE: These functions will crash or stall indefinitely if
-// the SSI0 module is not initialized and enabled.
-void static writecommand(uint8_t c) {
-                                        // wait until SSI0 not busy/transmit FIFO empty
-  while((SSI0_SR_R&SSI_SR_BSY)==SSI_SR_BSY){};
-  TFT_CS = TFT_CS_LOW;
-  DC = DC_COMMAND;
-  SSI0_DR_R = c;                        // data out
-                                        // wait until SSI0 not busy/transmit FIFO empty
-  while((SSI0_SR_R&SSI_SR_BSY)==SSI_SR_BSY){};
-}
 
 
-void static writedata(uint8_t c) {
-  while((SSI0_SR_R&SSI_SR_TNF)==0){};   // wait until transmit FIFO not full
-  DC = DC_DATA;
-  SSI0_DR_R = c;                        // data out
-}
 
-void static deselect(void) {
-                                        // wait until SSI0 not busy/transmit FIFO empty
-  while((SSI0_SR_R&SSI_SR_BSY)==SSI_SR_BSY){};
-  TFT_CS = TFT_CS_HIGH;    
-}
-
-// Subroutine to wait 1 msec
-// Inputs: None
-// Outputs: None
-// Notes: ...
-void Delay1ms(uint32_t n){uint32_t volatile time;
-  while(n){
-    time = 72724*2/91;  // 1msec, tuned at 80 MHz
-    while(time){
-      time--;
-    }
-    n--;
-  }
-}
-
-// Rather than a bazillion writecommand() and writedata() calls, screen
+// Rather than a bazillion SPI_OutCommand() and SPI_OutData() calls, screen
 // initialization commands and arguments are organized in these tables
 // stored in ROM.  The table may look bulky, but that's mostly the
 // formatting -- storage-wise this is hundreds of bytes more compact
@@ -792,18 +659,18 @@ void static commandList(const uint8_t *addr) {
 
   numCommands = *(addr++);               // Number of commands to follow
   while(numCommands--) {                 // For each command...
-    writecommand(*(addr++));             //   Read, issue command
+    SPI_OutCommand(*(addr++));             //   Read, issue command
     numArgs  = *(addr++);                //   Number of args to follow
     ms       = numArgs & DELAY;          //   If hibit set, delay follows args
     numArgs &= ~DELAY;                   //   Mask out delay bit
     while(numArgs--) {                   //   For each argument...
-      writedata(*(addr++));              //     Read, issue argument
+      SPI_OutData(*(addr++));              //     Read, issue argument
     }
 
     if(ms) {
       ms = *(addr++);             // Read post-command delay time (ms)
       if(ms == 255) ms = 500;     // If 255, delay for 500 ms
-      Delay1ms(ms);
+      Clock_Delay1ms(ms);
     }
   }
 }
@@ -811,54 +678,8 @@ void static commandList(const uint8_t *addr) {
 
 // Initialization code common to both 'B' and 'R' type displays
 void static commonInit(const uint8_t *cmdList) {
-  volatile uint32_t delay;
   ColStart  = RowStart = 0; // May be overridden in init func
-
-  SYSCTL_RCGCSSI_R |= 0x01;  // activate SSI0
-  SYSCTL_RCGCGPIO_R |= 0x01; // activate port A
-  while((SYSCTL_PRGPIO_R&0x01)==0){}; // allow time for clock to start
-
-  // toggle RST low to reset; CS low so it'll listen to us
-  // SSI0Fss is temporarily used as GPIO
-  GPIO_PORTA_DIR_R |= 0xC8;             // make PA3,6,7 out
-  GPIO_PORTA_AFSEL_R &= ~0xC8;          // disable alt funct on PA3,6,7
-  GPIO_PORTA_DEN_R |= 0xC8;             // enable digital I/O on PA3,6,7
-                                        // configure PA3,6,7 as GPIO
-  GPIO_PORTA_PCTL_R = (GPIO_PORTA_PCTL_R&0x00FF0FFF)+0x00000000;
-  GPIO_PORTA_AMSEL_R &= ~0xC8;          // disable analog functionality on PA3,6,7
-  TFT_CS = TFT_CS_LOW;
-  RESET = RESET_HIGH;
-  Delay1ms(500);
-  RESET = RESET_LOW;
-  Delay1ms(500);
-  RESET = RESET_HIGH;
-  Delay1ms(500);
-
-  // initialize SSI0
-  GPIO_PORTA_AFSEL_R |= 0x2C;           // enable alt funct on PA2,3,5
-  GPIO_PORTA_DEN_R |= 0x2C;             // enable digital I/O on PA2,3,5
-                                        // configure PA2,3,5 as SSI
-  GPIO_PORTA_PCTL_R = (GPIO_PORTA_PCTL_R&0xFF0F00FF)+0x00202200;
-  GPIO_PORTA_AMSEL_R &= ~0x2C;          // disable analog functionality on PA2,3,5
-  SSI0_CR1_R &= ~SSI_CR1_SSE;           // disable SSI
-  SSI0_CR1_R &= ~SSI_CR1_MS;            // master mode
-                                        // configure for system clock/PLL baud clock source
-  SSI0_CC_R = (SSI0_CC_R&~SSI_CC_CS_M)+SSI_CC_CS_SYSPLL;
-//                                        // clock divider for 3.125 MHz SSIClk (50 MHz PIOSC/16)
-//  SSI0_CPSR_R = (SSI0_CPSR_R&~SSI_CPSR_CPSDVSR_M)+16;
-                                        // clock divider for 8 MHz SSIClk (80 MHz PLL/24)
-                                        // SysClk/(CPSDVSR*(1+SCR))
-                                        // 80/(10*(1+0)) = 8 MHz (slower than 4 MHz)
-  SSI0_CPSR_R = (SSI0_CPSR_R&~SSI_CPSR_CPSDVSR_M)+10; // must be even number
-  SSI0_CR0_R &= ~(SSI_CR0_SCR_M |       // SCR = 0 (8 Mbps data rate)
-                  SSI_CR0_SPH |         // SPH = 0
-                  SSI_CR0_SPO);         // SPO = 0
-                                        // FRF = Freescale format
-  SSI0_CR0_R = (SSI0_CR0_R&~SSI_CR0_FRF_M)+SSI_CR0_FRF_MOTO;
-                                        // DSS = 8-bit data
-  SSI0_CR0_R = (SSI0_CR0_R&~SSI_CR0_DSS_M)+SSI_CR0_DSS_8;
-  SSI0_CR1_R |= SSI_CR1_SSE;            // enable SSI
-
+  SPI_Init(); // 8MHz clock
   if(cmdList) commandList(cmdList);
 }
 
@@ -893,8 +714,8 @@ void ST7735_InitR(enum initRFlags option) {
 
   // if black, change MADCTL color filter
   if (option == INITR_BLACKTAB) {
-    writecommand(ST7735_MADCTL);
-    writedata(0xC0);
+    SPI_OutCommand(ST7735_MADCTL);
+    SPI_OutData(0xC0);
   }
   TabColor = option;
   ST7735_SetCursor(0,0);
@@ -909,27 +730,27 @@ void ST7735_InitR(enum initRFlags option) {
 // Requires 11 bytes of transmission
 void static setAddrWindow(uint8_t x0, uint8_t y0, uint8_t x1, uint8_t y1) {
 
-  writecommand(ST7735_CASET); // Column addr set
-  writedata(0x00);
-  writedata(x0+ColStart);     // XSTART
-  writedata(0x00);
-  writedata(x1+ColStart);     // XEND
+  SPI_OutCommand(ST7735_CASET); // Column addr set
+  SPI_OutData(0x00);
+  SPI_OutData(x0+ColStart);     // XSTART
+  SPI_OutData(0x00);
+  SPI_OutData(x1+ColStart);     // XEND
 
-  writecommand(ST7735_RASET); // Row addr set
-  writedata(0x00);
-  writedata(y0+RowStart);     // YSTART
-  writedata(0x00);
-  writedata(y1+RowStart);     // YEND
+  SPI_OutCommand(ST7735_RASET); // Row addr set
+  SPI_OutData(0x00);
+  SPI_OutData(y0+RowStart);     // YSTART
+  SPI_OutData(0x00);
+  SPI_OutData(y1+RowStart);     // YEND
 
-  writecommand(ST7735_RAMWR); // write to RAM
+  SPI_OutCommand(ST7735_RAMWR); // write to RAM
 }
 
 
 // Send two bytes of data, most significant byte first
 // Requires 2 bytes of transmission
 void static pushColor(uint16_t color) {
-  writedata((uint8_t)(color >> 8));
-  writedata((uint8_t)color);
+  SPI_OutData((uint8_t)(color >> 8));
+  SPI_OutData((uint8_t)color);
 }
 
 
@@ -953,7 +774,7 @@ void ST7735_DrawPixel(int16_t x, int16_t y, uint16_t color) {
 
   pushColor(color);
 
-  deselect();
+  //deselect();
 }
 
 
@@ -975,11 +796,11 @@ void ST7735_DrawFastVLine(int16_t x, int16_t y, int16_t h, uint16_t color) {
   setAddrWindow(x, y, x, y+h-1);
 
   while (h--) {
-    writedata(hi);
-    writedata(lo);
+    SPI_OutData(hi);
+    SPI_OutData(lo);
   }
 
-  deselect();
+ // deselect();
 }
 
 
@@ -1001,11 +822,11 @@ void ST7735_DrawFastHLine(int16_t x, int16_t y, int16_t w, uint16_t color) {
   setAddrWindow(x, y, x+w-1, y);
 
   while (w--) {
-    writedata(hi);
-    writedata(lo);
+    SPI_OutData(hi);
+    SPI_OutData(lo);
   }
 
-  deselect();
+  //deselect();
 }
 
 
@@ -1041,12 +862,12 @@ void ST7735_FillRect(int16_t x, int16_t y, int16_t w, int16_t h, uint16_t color)
 
   for(y=h; y>0; y--) {
     for(x=w; x>0; x--) {
-      writedata(hi);
-      writedata(lo);
+      SPI_OutData(hi);
+      SPI_OutData(lo);
     }
   }
 
-  deselect();
+ // deselect();
 }
 
 //------------ST7735_DrawSmallCircle------------
@@ -1073,11 +894,11 @@ void ST7735_DrawSmallCircle(int16_t x, int16_t y, uint16_t color) {
     setAddrWindow(x+smallCircle[i][0], y+i, x+smallCircle[i][1], y+i);
     w = smallCircle[i][2];
     while (w--) {
-      writedata(hi);
-      writedata(lo);
+      SPI_OutData(hi);
+      SPI_OutData(lo);
     }
   }
-  deselect();
+ // deselect();
 }
 //------------ST7735_DrawCircle------------
 // Draw a small circle (diameter of 10 pixels)
@@ -1107,11 +928,11 @@ void ST7735_DrawCircle(int16_t x, int16_t y, uint16_t color) {
     setAddrWindow(x+circle[i][0], y+i, x+circle[i][1], y+i);
     w = circle[i][2];
     while (w--) {
-      writedata(hi);
-      writedata(lo);
+      SPI_OutData(hi);
+      SPI_OutData(lo);
     }
   }
-  deselect();
+ // deselect();
 }
 
 //------------ST7735_Color565------------
@@ -1193,16 +1014,16 @@ void ST7735_DrawBitmap(int16_t x, int16_t y, const uint16_t *image, int16_t w, i
   for(y=0; y<h; y=y+1){
     for(x=0; x<w; x=x+1){
                                         // send the top 8 bits
-      writedata((uint8_t)(image[i] >> 8));
+      SPI_OutData((uint8_t)(image[i] >> 8));
                                         // send the bottom 8 bits
-      writedata((uint8_t)image[i]);
+      SPI_OutData((uint8_t)image[i]);
       i = i + 1;                        // go to the next pixel
     }
     i = i + skipC;
     i = i - 2*originalWidth;
   }
 
-  deselect();
+//  deselect();
 }
 
 
@@ -1229,12 +1050,13 @@ void ST7735_DrawCharS(int16_t x, int16_t y, char c, int16_t textColor, int16_t b
      ((x + 6 * size - 1) < 0) || // Clip left
      ((y + 8 * size - 1) < 0))   // Clip top
     return;
+  uint32_t k = (uint32_t)(c & 0xFF); // convert to unsigned regardless of whether char is signed or unsigned
 
   for (i=0; i<6; i++ ) {
     if (i == 5)
       line = 0x0;
     else
-      line = Font[(c*5)+i];
+      line = Font[(k*5)+i];
     for (j = 0; j<8; j++) {
       if (line & 0x1) {
         if (size == 1) // default size
@@ -1277,7 +1099,7 @@ void ST7735_DrawChar(int16_t x, int16_t y, char c, int16_t textColor, int16_t bg
      ((y + 8*size - 1) < 0)){         // Clip top
     return;
   }
-
+  uint32_t k = (uint32_t)(c & 0xFF); // convert to unsigned regardless of whether char is signed or unsigned
   setAddrWindow(x, y, x+6*size-1, y+8*size-1);
 
   line = 0x01;        // print the top row first
@@ -1286,7 +1108,7 @@ void ST7735_DrawChar(int16_t x, int16_t y, char c, int16_t textColor, int16_t bg
     for(i=0; i<size; i=i+1){
       // print the columns, starting on the left
       for(col=0; col<5; col=col+1){
-        if(Font[(c*5)+col]&line){
+        if(Font[(k*5)+col]&line){
           // bit is set in Font, print pixel(s) in text color
           for(j=0; j<size; j=j+1){
             pushColor(textColor);
@@ -1306,7 +1128,7 @@ void ST7735_DrawChar(int16_t x, int16_t y, char c, int16_t textColor, int16_t bg
     line = line<<1;   // move up to the next row
   }
 
-  deselect();
+  //deselect();
 }
 //------------ST7735_DrawString------------
 // String draw function.
@@ -1322,7 +1144,29 @@ uint32_t ST7735_DrawString(uint16_t x, uint16_t y, char *pt, int16_t textColor){
   uint32_t count = 0;
   if(y>15) return 0;
   while(*pt){
-    ST7735_DrawCharS(x*6, y*10, *pt, textColor, ST7735_BLACK, 1);
+    ST7735_DrawChar(x*6, y*10, *pt, textColor, ST7735_BLACK, 1);
+    pt++;
+    x = x+1;
+    if(x>20) return count;  // number of characters printed
+    count++;
+  }
+  return count;  // number of characters printed
+}
+//------------ST7735_DrawString------------
+// String draw function.
+// 16 rows (0 to 15) and 21 characters (0 to 20)
+// Requires (11 + size*size*6*8) bytes of transmission for each character
+// Input: x         columns from the left edge (0 to 20)
+//        y         rows from the top edge (0 to 15)
+//        pt        pointer to a null terminated string to be printed
+//        textColor 16-bit color of the characters
+// background is transparent and size is 1
+// Output: number of characters printed
+uint32_t ST7735_DrawStringTransparent(uint16_t x, uint16_t y, char *pt, int16_t textColor){
+  uint32_t count = 0;
+  if(y>15) return 0;
+  while(*pt){
+    ST7735_DrawCharS(x*6, y*10, *pt, textColor, textColor, 1);
     pt++;
     x = x+1;
     if(x>20) return count;  // number of characters printed
@@ -1395,6 +1239,46 @@ void fillmessage5(uint32_t n){
   fillmessage(n);
 }
 
+void static fillmessage2_1(uint32_t n){
+  if(n>999)n=999;
+  if(n>=100){  // 100 to 999
+    Message[0] = (n/100+'0'); /* tens digit */
+    n = n%100; //the rest
+  }else { // 0 to 99
+    Message[0] = ' '; /* n is between 0.0 and 9.9 */
+  }
+  Message[1] = (n/10+'0'); /* ones digit */
+  n = n%10; //the rest
+  Message[2] = '.';
+  Message[3] = (n+'0'); /* tenths digit */
+  Message[4] = 0;
+}
+
+void static fillmessage2_Hex(uint32_t n){ char digit;
+  if(n>255){
+    Message[0] = '*';
+    Message[1] = '*';
+  }else{
+    digit = n/16;
+    if(digit<10){
+      digit = digit+'0';
+    }else{
+      digit = digit+'A'-10;
+    }
+    Message[0] = digit; /* 16's digit */
+    digit = n%16;
+    if(digit<10){
+      digit = digit+'0';
+    }else{
+      digit = digit+'A'-10;
+    }
+    Message[1] = digit; /* ones digit */
+  }
+  Message[2] = ',';
+  Message[3] = 0;
+}
+
+
 //********ST7735_SetCursor*****************
 // Move the cursor to the desired X- and Y-position.  The
 // next character will be printed here.  X=0 is the leftmost
@@ -1424,7 +1308,7 @@ void ST7735_OutUDec(uint32_t n){
   StX = StX+Messageindex;
   if(StX>20){
     StX = 20;
-    ST7735_DrawCharS(StX*6,StY*10,'*',ST7735_RED,ST7735_BLACK, 1);
+    ST7735_DrawChar(StX*6,StY*10,'*',ST7735_RED,ST7735_BLACK, 1);
   }
 }
 
@@ -1443,7 +1327,7 @@ void ST7735_OutUDec4(uint32_t n){
   StX = StX+Messageindex;
   if(StX>20){
     StX = 20;
-    ST7735_DrawCharS(StX*6,StY*10,'*',ST7735_RED,ST7735_BLACK, 1);
+    ST7735_DrawChar(StX*6,StY*10,'*',ST7735_RED,ST7735_BLACK, 1);
   }
 }
 //-----------------------ST7735_OutUDec5-----------------------
@@ -1461,11 +1345,46 @@ void ST7735_OutUDec5(uint32_t n){
   StX = StX+Messageindex;
   if(StX>20){
     StX = 20;
-    ST7735_DrawCharS(StX*6,StY*10,'*',ST7735_RED,ST7735_BLACK, 1);
+    ST7735_DrawChar(StX*6,StY*10,'*',ST7735_RED,ST7735_BLACK, 1);
   }
 }
 
 
+//-----------------------ST7735_OutUFix2_1-----------------------
+// Output a 32-bit number in unsigned 3-digit fixed point, 0.1 resolution
+// numbers 0 to 999 printed as " 0.0" to "99.9"
+// Position determined by ST7735_SetCursor command
+// Input: 32-bit number to be transferred
+//        textColor 16-bit color of the numbers
+// Output: none
+// Fixed format 4 characters with no space before or after
+void ST7735_OutUFix2_1(uint32_t n, int16_t textColor){
+  fillmessage2_1(n);
+  ST7735_DrawString(StX,StY,Message,textColor);
+  StX = StX+4;
+  if(StX>20){
+    StX = 20;
+    ST7735_DrawChar(StX*6,StY*10,'*',ST7735_RED,ST7735_BLACK, 1);
+  }
+}
+
+//-----------------------ST7735_OutUHex2-----------------------
+// Output a 32-bit number in unsigned 2-digit hexadecimal format
+// numbers 0 to 255 printed as "00," to "FF,"
+// Position determined by ST7735_SetCursor command
+// Input: 32-bit number to be transferred
+//        textColor 16-bit color of the numbers
+// Output: none
+// Fixed format 3 characters with comma after
+void ST7735_OutUHex2(uint32_t n, int16_t textColor){
+  fillmessage2_Hex(n);
+  ST7735_DrawString(StX,StY,Message,textColor);
+  StX = StX+3;
+  if(StX>20){
+    StX = 20;
+    ST7735_DrawChar(StX*6,StY*10,'*',ST7735_RED,ST7735_BLACK, 1);
+  }
+}
 
 
 
@@ -1484,48 +1403,48 @@ void ST7735_OutUDec5(uint32_t n){
 // Output: none
 void ST7735_SetRotation(uint8_t m) {
 
-  writecommand(ST7735_MADCTL);
+  SPI_OutCommand(ST7735_MADCTL);
   Rotation = m % 4; // can't be higher than 3
   switch (Rotation) {
    case 0:
      if (TabColor == INITR_BLACKTAB) {
-       writedata(MADCTL_MX | MADCTL_MY | MADCTL_RGB);
+       SPI_OutData(MADCTL_MX | MADCTL_MY | MADCTL_RGB);
      } else {
-       writedata(MADCTL_MX | MADCTL_MY | MADCTL_BGR);
+       SPI_OutData(MADCTL_MX | MADCTL_MY | MADCTL_BGR);
      }
      _width  = ST7735_TFTWIDTH;
      _height = ST7735_TFTHEIGHT;
      break;
    case 1:
      if (TabColor == INITR_BLACKTAB) {
-       writedata(MADCTL_MY | MADCTL_MV | MADCTL_RGB);
+       SPI_OutData(MADCTL_MY | MADCTL_MV | MADCTL_RGB);
      } else {
-       writedata(MADCTL_MY | MADCTL_MV | MADCTL_BGR);
+       SPI_OutData(MADCTL_MY | MADCTL_MV | MADCTL_BGR);
      }
      _width  = ST7735_TFTHEIGHT;
      _height = ST7735_TFTWIDTH;
      break;
   case 2:
      if (TabColor == INITR_BLACKTAB) {
-       writedata(MADCTL_RGB);
+       SPI_OutData(MADCTL_RGB);
      } else {
-       writedata(MADCTL_BGR);
+       SPI_OutData(MADCTL_BGR);
      }
      _width  = ST7735_TFTWIDTH;
      _height = ST7735_TFTHEIGHT;
     break;
    case 3:
      if (TabColor == INITR_BLACKTAB) {
-       writedata(MADCTL_MX | MADCTL_MV | MADCTL_RGB);
+       SPI_OutData(MADCTL_MX | MADCTL_MV | MADCTL_RGB);
      } else {
-       writedata(MADCTL_MX | MADCTL_MV | MADCTL_BGR);
+       SPI_OutData(MADCTL_MX | MADCTL_MV | MADCTL_BGR);
      }
      _width  = ST7735_TFTHEIGHT;
      _height = ST7735_TFTWIDTH;
      break;
   }
 
-  deselect();
+//  deselect();
 }
 
 
@@ -1536,11 +1455,11 @@ void ST7735_SetRotation(uint8_t m) {
 // Output: none
 void ST7735_InvertDisplay(int i) {
   if(i){
-    writecommand(ST7735_INVON);
+    SPI_OutCommand(ST7735_INVON);
   } else{
-    writecommand(ST7735_INVOFF);
+    SPI_OutCommand(ST7735_INVOFF);
   }  
-  deselect();
+ // deselect();
 }
 // graphics routines
 // y coordinates 0 to 31 used for labels and messages
@@ -1549,6 +1468,8 @@ void ST7735_InvertDisplay(int i) {
 
 int32_t Ymax,Ymin,X;        // X goes from 0 to 127
 int32_t Yrange; //YrangeDiv2;
+int TimeIndex;               // horizontal position of next point to plot on graph (0 to 99)
+uint16_t PlotBGColor;        // background color of the plot used whenever clearing plot area
 
 // *************** ST7735_PlotClear ********************
 // Clear the graphics buffer, set X coordinate to 0
@@ -1568,6 +1489,65 @@ void ST7735_PlotClear(int32_t ymin, int32_t ymax){
   }
   //YrangeDiv2 = Yrange/2;
   X = 0;
+}
+// ------------ST7735_Drawaxes------------
+// Set up the axes, labels, and other variables to
+// allow data to be plotted in a chart using the
+// functions ST7735_PlotPoint() and
+// ST7735_PlotIncrement().
+// Input: axisColor   16-bit color for axes, which can be produced by ST7735_Color565()
+//        bgColor     16-bit color for plot background, which can be produced by ST7735_Color565()
+//        xLabel      pointer to a null terminated string for x-axis (~4 character space)
+//        yLabel1     pointer to a null terminated string for top of y-axis (~3-5 character space)
+//        label1Color 16-bit color for y-axis label1, which can be produced by ST7735_Color565()
+//        yLabel2     pointer to a null terminated string for bottom of y-axis (~3 character space)
+//                      if yLabel2 is empty string, no yLabel2 is printed, and yLabel1 is centered
+//        label2Color 16-bit color for y-axis label2, which can be produced by ST7735_Color565()
+//        ymax        maximum value to be printed
+//        ymin        minimum value to be printed
+// Output: none
+// Assumes: ST7735_Init() has been called
+void ST7735_Drawaxes(uint16_t axisColor, uint16_t bgColor, char *xLabel,
+  char *yLabel1, uint16_t label1Color, char *yLabel2, uint16_t label2Color,
+  int32_t ymax, int32_t ymin){
+  int i;
+  // assume that ymax > ymin
+  Ymax = ymax;
+  Ymin = ymin;
+  Yrange = Ymax - Ymin;
+  TimeIndex = 0;
+  PlotBGColor = bgColor;
+  ST7735_FillRect(0, 17, 111, 111, bgColor);
+  ST7735_DrawFastHLine(10, 117, 101, axisColor);
+  ST7735_DrawFastVLine(10, 17, 101, axisColor);
+  for(i=20; i<=110; i=i+10){
+    ST7735_DrawPixel(i, 118, axisColor);
+  }
+  for(i=17; i<117; i=i+10){
+    ST7735_DrawPixel(9, i, axisColor);
+  }
+  i = 50;
+  while((*xLabel) && (i < 100)){
+    ST7735_DrawChar(i, 120, *xLabel, axisColor, bgColor, 1);
+    i = i + 6;
+    xLabel++;
+  }
+  if(*yLabel2){ // two labels
+    i = 26;
+    while((*yLabel2) && (i < 50)){
+      ST7735_DrawChar(0, i, *yLabel2, label2Color, bgColor, 1);
+      i = i + 8;
+      yLabel2++;
+    }
+    i = 82;
+  }else{ // one label
+    i = 42;
+  }
+  while((*yLabel1) && (i < 120)){
+    ST7735_DrawChar(0, i, *yLabel1, label1Color, bgColor, 1);
+    i = i + 8;
+    yLabel1++;
+  }
 }
 
 // *************** ST7735_PlotPoint ********************
@@ -1589,6 +1569,44 @@ void ST7735_PlotPoint(int32_t y){int32_t j;
   ST7735_DrawPixel(X+1, j,   ST7735_BLUE);
   ST7735_DrawPixel(X,   j+1, ST7735_BLUE);
   ST7735_DrawPixel(X+1, j+1, ST7735_BLUE);
+}
+
+// ------------ST7735_PlotPoint2------------
+// Plot a point on the chart.  To plot several points in the
+// same column, call this function repeatedly before calling
+// ST7735_PlotIncrement().  The units of the data are the
+// same as the ymax and ymin values specified in the
+// initialization function.
+// Input: data1  value to be plotted (units not specified)
+//        color1 16-bit color for the point, which can be produced by LCD_Color565()
+// Output: none
+// Assumes: ST7735_Init() and ST7735_Drawaxes() have been called
+void ST7735_PlotPoint2(int32_t data1, uint16_t color1){
+  data1 = ((data1 - Ymin)*100)/Yrange;
+  if(data1 > 98){
+    data1 = 98;
+    color1 = ST7735_RED;
+  }
+  if(data1 < 0){
+    data1 = 0;
+    color1 = ST7735_RED;
+  }
+  ST7735_DrawPixel(TimeIndex + 11, 116 - data1, color1);
+  ST7735_DrawPixel(TimeIndex + 11, 115 - data1, color1);
+}
+// ------------ST7735_PlotIncrement------------
+// Increment the plot between subsequent calls to
+// LCD_PlotPoint().  Automatically wrap and clear the
+// column to be printed to.
+// Input: none
+// Output: none
+// Assumes: ST7735_Init() and ST7735_Drawaxes() have been called
+void ST7735PlotIncrement(void){
+  TimeIndex = TimeIndex + 1;
+  if(TimeIndex > 99){
+    TimeIndex = 0;
+  }
+  ST7735_DrawFastVLine(TimeIndex + 11, 17, 100, PlotBGColor);
 }
 // *************** ST7735_PlotLine ********************
 // Used in the voltage versus time plot, plot line to new point
@@ -1803,11 +1821,34 @@ void ST7735_OutChar(char ch){
     ST7735_DrawString(0,StY,"                     ",StTextColor);
     return;
   }
-  ST7735_DrawCharS(StX*6,StY*10,ch,ST7735_YELLOW,ST7735_BLACK, 1);
+  ST7735_DrawChar(StX*6,StY*10,ch,StTextColor,ST7735_BLACK, 1);
   StX++;
   if(StX>20){
     StX = 20;
-    ST7735_DrawCharS(StX*6,StY*10,'*',ST7735_RED,ST7735_BLACK, 1);
+    ST7735_DrawChar(StX*6,StY*10,'*',ST7735_RED,ST7735_BLACK, 1);
+  }
+  return;
+}
+// *************** ST7735_OutCharTransparent ********************
+// Output one character to the LCD
+// Position determined by ST7735_SetCursor command
+// Color set by ST7735_SetTextColor, background is transparent
+// Inputs: 8-bit ASCII character
+// Outputs: none
+void ST7735_OutCharTransparent(char ch){
+  if((ch == 10) || (ch == 13) || (ch == 27)){
+    StY++; StX=0;
+    if(StY>15){
+      StY = 0;
+    }
+    ST7735_DrawStringTransparent(0,StY,"                     ",StTextColor);
+    return;
+  }
+  ST7735_DrawCharS(StX*6,StY*10,ch,StTextColor,StTextColor, 1);
+  StX++;
+  if(StX>20){
+    StX = 20;
+    ST7735_DrawCharS(StX*6,StY*10,'*',ST7735_RED,ST7735_RED, 1);
   }
   return;
 }
@@ -1824,6 +1865,19 @@ void ST7735_OutString(char *ptr){
     ptr = ptr + 1;
   }
 }
+//********ST7735_OutStringTransparent*****************
+// Print a string of characters to the ST7735 LCD.
+// Position determined by ST7735_SetCursor command
+// Color set by ST7735_SetTextColor, background is transparent
+// The string will not automatically wrap.
+// inputs: ptr  pointer to NULL-terminated ASCII string
+// outputs: none
+void ST7735_OutStringTransparent(char *ptr){
+  while(*ptr){
+      ST7735_OutCharTransparent(*ptr);
+    ptr = ptr + 1;
+  }
+}
 // ************** ST7735_SetTextColor ************************
 // Sets the color in which the characters will be printed
 // Background color is fixed at black
@@ -1834,51 +1888,51 @@ void ST7735_SetTextColor(uint16_t color){
   StTextColor = color;
 }
 
-// Print a character to ST7735 LCD.
-int fputc(int ch, FILE *f){
-  ST7735_OutChar(ch);
-  return 1;
-}
-// No input from Nokia, always return data.
-int fgetc (FILE *f){
+
+
+
+int ST7735_open(const char *path, unsigned flags, int llv_fd){
+  ST7735_InitR(INITR_REDTAB);
   return 0;
 }
-// Function called when file error occurs.
-int ferror(FILE *f){
-  /* Your implementation of ferror */
-  return EOF;
+int ST7735_close( int dev_fd){
+    return 0;
 }
-// Abstraction of general output device
-// Volume 2 section 3.4.5
+int ST7735_read(int dev_fd, char *buf, unsigned count){char ch;
+// not implemented
+  return 1;
+}
+int ST7735_write(int dev_fd, const char *buf, unsigned count){ unsigned int num=count;
+  while(num){
+    ST7735_OutChar(*buf);
+    buf++;
+    num--;
+  }
+  return count;
+}
+off_t ST7735_lseek(int dev_fd, off_t ioffset, int origin){
+    return 0;
+}
+int ST7735_unlink(const char * path){
+    return 0;
+}
+int ST7735_rename(const char *old_name, const char *new_name){
+    return 0;
+}
 
-// *************** Output_Init ********************
-// Standard device driver initialization function for printf
-// Initialize ST7735 LCD
-// Inputs: none
-// Outputs: none
-void Output_Init(void){
-  ST7735_InitR(INITR_REDTAB);
-  ST7735_FillScreen(0);                 // set screen to black
-}
-
-// Clear display
-void Output_Clear(void){ // Clears the display
-  ST7735_FillScreen(0);    // set screen to black
-}
-// Turn off display (low power)
-void Output_Off(void){   // Turns off the display
-  Output_Clear();  // not implemented
-}
-// Turn on display
-void Output_On(void){ // Turns on the display
-  Output_Init();      // reinitialize
-}
-// set the color for future output
-// Background color is fixed at black
-// Input:  16-bit packed color
+//------------ST7735_InitPrintf------------
+// Initialize the ST7735 for printf
+// Input: none
 // Output: none
-void Output_Color(uint32_t newColor){ // Set color of future output
-  ST7735_SetTextColor(newColor);
+void ST7735_InitPrintf(enum initRFlags tab){int ret_val; FILE *fptr;
+  ST7735_InitR(tab); // INITR_REDTAB for AdaFruit, INITR_BLACKTAB for HiLetGo
+  ret_val = add_device("st7735", _SSA, ST7735_open, ST7735_close, ST7735_read, ST7735_write, ST7735_lseek, ST7735_unlink, ST7735_rename);
+  if(ret_val) return; // error
+  fptr = fopen("st7735","w");
+  if(fptr == 0) return; // error
+  freopen("st7735:", "w", stdout); // redirect stdout to uart
+  setvbuf(stdout, NULL, _IONBF, 0); // turn off buffering for stdout
+
 }
 
 
@@ -2079,51 +2133,3 @@ void ST7735_SetX(int32_t newX){
     X = newX;
   }
 }
-
-//*************ST7735_DrawLine********************************************
-//  Draws an arbitrary line
-//  Inputs: (x1,y1) is the start point
-//          (x2,y2) is the end point
-//          color is 16-bit 5-6-5 R, G, B format 
-//  x coordinates range from 0 to 127, 0 is left, 79 is right
-//  y coordinates range from 0 to 159, 0 is top, 159 is bottom
-//  Outputs: none
-void ST7735_DrawLine(int32_t x1, int32_t y1,
-                            int32_t x2, int32_t y2, uint32_t color){
-// ECE445L Lab 3 task
-  int32_t i,j,dx,dy,magdx,magdy;
-  magdx = dx = x2-x1;
-  if(magdx < 0) magdx = -magdx;
-  magdy = dy = y2-y1;
-  if(magdy < 0) magdy = -magdy;
-  if(magdx >= magdy){   // step along x axis
-    if(dx<0){           // dx is always positive
-      i=x2; x2=x1; x1=i; dx=-dx; // swap, dx positive
-      j=y2; y2=y1; y1=j; dy=-dy; // swap
-    }
-    for(i=x1; i<=x2; i++){
-      j = y1 + (dy*(i-x1))/dx - 1;
-      ST7735_DrawPixel(i,j,color);
-      j = y1 + (dy*(i-x1))/dx;
-      ST7735_DrawPixel(i,j,color);
-//      j = y1 + (dy*(i-x1))/dx + 1;
-//      ST7735_DrawPixel(i,j,color);
-    }
-  } else{               // step along y axis
-    if(dy<0){           // dy is always positive
-      i=x2; x2=x1; x1=i; dx=-dx; // swap, dy positive
-      j=y2; y2=y1; y1=j; dy=-dy; // swap
-    }
-    for(j=y1; j<=y2; j++){
-      i = x1 + (dx*(j-y1))/dy - 1;
-      ST7735_DrawPixel(i,j,color);
-      i = x1 + (dx*(j-y1))/dy;
-//      k = 40*j+i/2;
-      ST7735_DrawPixel(i,j,color);
-//      i = x1 + (dx*(j-y1))/dy + 1;
-//      ST7735_DrawPixel(i,j,color);
-    }
-  }
-}
-
-

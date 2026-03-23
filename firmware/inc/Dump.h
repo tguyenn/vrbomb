@@ -1,84 +1,81 @@
 /**
- * @file Dump.h
- * @author your name (you@domain.com), Jonathan Valvano, Matthew Yu
- *    <TA NAME and LAB SECTION # HERE>
- * @brief 
- *    A set of debugging functions that capture data for later inspection.
- *    There are two primary methods:
- *       - DebugCapture will record data and time.
- *       - JitterMeasure will measure real time jitter.
- * @version 0.2
- * @date 2022-09-01 <REPLACE WITH DATE OF LAST REVISION>
- *
- * @copyright Copyright (c) 2022
- */
-#pragma once
+ * @file      Dump.h
+ * @brief     Debugging instruments designed in Lab 3
+ * @details   Your Solution to ECE319K Lab 3<br>
 
-/** File includes. */
+ * @version   ECE319K v1.2
+ * @author    Put your name here
+ * @copyright Put your copyright here,
+ * @warning   AS-IS
+ * @date      July 19, 2025
+  ******************************************************************************/
+  /*!
+ * @defgroup Debugging
+ * @brief Debugging tools
+  * @{*/
+#ifndef __DUMP_H__
+#define __DUMP_H__
 #include <stdint.h>
 
-#define DUMPBUFSIZE 300
 
 /**
- * @brief DumpInit initializes the debugging dump.
- * 
- * @note Holds 0 up to DUMPBUFSIZE-1 elements. Each element is 32-bit data and
- *       32-bit time.
+ * Initialize the debugging dump buffers
+ * @param none
+ * @return none 
+ * @note  Initializes your index or pointer
+ * @see Debug_Dump() Debug_Period()
+ * @brief  Initialize arrays
  */
-void DumpInit(void);
+void Debug_Init(void);
+
 
 /**
- * @brief DumpCapture dumps a 32-bit unsigned integer into the array. Records
- *        time and data. Reads TIMER1_TAR_R to get the current 32-bit time.
- * 
- * @param data The data to be captured at TIMER1_TAR_R time.
- * @note This should be minimally intrusive.
+ * Records one data and one time into the two arrays.
+ * @param data is value to store in DataBuffer
+ * @return 1 for success, 0 for failure (buffers full)
+ * @note  Initializes your index or pointer
+ * @see Debug_Init() Debug_Period()
+ * @brief  Debugging dump
  */
-void DumpCapture(uint32_t data);
+uint32_t Debug_Dump(uint32_t data);
 
 /**
- * @brief DumpCount returns how many elements are currently stored.
- * 
- * @return uint32_t A value from 0 to DUMPBUFSIZE-1.
+ * One first call record data and time.
+ * On subsequent calls, only record
+ * data and one time only if the data differs
+ * from the last recording
+ * @param data is value to store in DataBuffer
+ * @return 1 for success, 0 for failure (buffers full)
+ * @note  Initializes your index or pointer
+ * @see Debug_Init() Debug_Period()
+ * @brief  Debugging dump with filter
  */
-uint32_t DumpCount(void);
+uint32_t Debug_Dump2(uint32_t data);
 
 /**
- * @brief Allows users to look at debug data.
- * 
- * @return uint32_t* Pointer to the current debug data buffer.
+ * Calculate period of the recorded data using mask
+ * @param mask specifies which bit(s) to observe
+ * @return period in bus cycles, 0 if there is not enough collected data to calculate period
+ * @note  Period is defined as rising edge (low to high) to the next rising edge
+ * @see Debug_Init() Debug_Period()
+ * @brief  Initialize arrays
  */
-uint32_t* DumpData(void);
+uint32_t Debug_Period(uint32_t mask);
+
 
 /**
- * @brief Allows users to look at debug times.
- * 
- * @return uint32_t* Pointer to the current debug time buffer.
+ * Calculate duty cycle of the recorded data using mask.<br>
+ * Period is defined as rising edge (low to high) to the next rising edge.<br>
+ * High is defined as rising edge (low to high) to the next falling edge.<br>
+ * Duty cycle is (100*High)/Period 
+ * @param mask specifies which bit(s) to observe
+ * @return period in bus cycles, 0 if there is not enough collected data to calculate period
+ * @note  Lab 3 extra credit
+ * @see Debug_Init() Debug_Period()
+ * @brief  Initialize arrays
  */
-uint32_t* DumpTime(void);
- 
-/**
- * @brief JitterInit initializes jitter recordings to determine if task is real
- *        time.
- * 
- * @note Assume that JitterMeasure is called from a periodic real-time task.
- */
-void JitterInit(void);
+uint32_t Debug_Duty(uint32_t mask);
 
-/**
- * @brief Measures jitter. Maintains the maximum and minimum elapsed times.
- * 
- * @note The first time called, JitterMeasure just measures current time. On
- *       subsequent calls, JitterMeasure measures the elapsed time from the
- *       previous call. 
- */
-void JitterMeasure(void);
+#endif
+/** @}*/
 
-/**
- * @brief JitterGet returns the maximum minus minimum elapsed time. The result
- *        is the worst case from calling JitterInit to now. There is no error if
- *        this returns 0.
- * 
- * @return uint32_t The difference between maximum and minimum elapsed times.
- */
-uint32_t JitterGet(void);
