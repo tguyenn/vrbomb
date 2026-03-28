@@ -1,28 +1,27 @@
 // Lab7Main.c
 // Runs on MSPM0G3507
-// Lab 7 
+// Lab 7
 // Your name
 // Last Modified: January 12, 2026
 
-#include <stdio.h>
-#include <stdint.h>
-#include <ti/devices/msp/msp.h>
-#include "../inc/ST7735.h"
+// #include "../inc/ADC1.h"
 #include "../inc/Clock.h"
 #include "../inc/LaunchPad.h"
+#include "../inc/ST7735.h"
 #include "../inc/Texas.h"
 #include "../inc/Timer.h"
-#include "../inc/ADC1.h"
+#include <stdint.h>
+#include <stdio.h>
+#include <ti/devices/msp/msp.h>
 
 // ****note to ECE319K students****
 // the data sheet says the ADC does not work when clock is 80 MHz
 // however, the ADC seems to work on my boards at 80 MHz
 // I suggest you try 80MHz, but if it doesn't work, switch to 40MHz
-void PLL_Init(void){ // set phase lock loop (PLL)
+void PLL_Init(void) { // set phase lock loop (PLL)
   // Clock_Init40MHz(); // run this line for 40MHz
-  Clock_Init80MHz(0);   // run this line for 80MHz
+  Clock_Init80MHz(0); // run this line for 80MHz
 }
-
 
 // // implement this function
 // void OutFix(uint32_t n){
@@ -46,21 +45,93 @@ void PLL_Init(void){ // set phase lock loop (PLL)
 // float FloatPosition;  // 32-bit floating-point cm
 //  // define a semaphore
 // uint32_t startTime,stopTime;
-// uint32_t Offset,ADCtime,Converttime,FloatConverttime,OutFixtime,FloatOutFixtime; // in bus cycles
-// uint32_t Time;
+// uint32_t
+// Offset,ADCtime,Converttime,FloatConverttime,OutFixtime,FloatOutFixtime; // in
+// bus cycles uint32_t Time;
 // // use main1 if you do not have a voltmeter
 // // use main1 to test slidepot interface
 // // connect slidepot pin 2 to ADC1 channel 5, PB18
 // // Open TExaSdisplay and see slidepot pin2 go from 0 to 3.3V
-int main(void){ // main1
+
+// --------------- TEST CODE FOR 445L ---------------------
+// Test analog mux selection of hall effect, 2 hall effect sensors are actually
+// attached for testing purposes
+
+int main(void) { // main1
   __disable_irq();
   PLL_Init(); // set bus speed
   LaunchPad_Init();
-  TExaS_Init(ADC1,5,0); //ADC1 channel 5, PB18, slidepot
-  ST7735_InitR(INITR_REDTAB);
+  // TExaS_Init(ADC1, 5, 0); // ADC1 channel 5, PB18, slidepot
+  // ST7735_InitR(INITR_REDTAB);
   __enable_irq();
-  while(1){
-    ST7735_FillScreen(ST7735_BLACK);
+
+  // ST7735_FillScreen(ST7735_BLACK);
+
+  while (1) {
+    // ST7735_OutUDec4(i);
+    static uint32_t i = 0;
+    if (i > 15)
+      i = 0;
+
+    // GPIOB->DOUT31_0 = 0;
+
+    switch (i) {
+    case 0:
+      GPIOB->DOUT31_0 = 0x000; // All off
+      break;
+    case 1:
+      GPIOB->DOUT31_0 = 0x001; // PB0
+      break;
+    case 2:
+      GPIOB->DOUT31_0 = 0x040; // PB6
+      break;
+    case 3:
+      GPIOB->DOUT31_0 = 0x041; // PB6, PB0
+      break;
+    case 4:
+      GPIOB->DOUT31_0 = 0x080; // PB7
+      break;
+    case 5:
+      GPIOB->DOUT31_0 = 0x081; // PB7, PB0
+      break;
+    case 6:
+      GPIOB->DOUT31_0 = 0x0C0; // PB7, PB6
+      break;
+    case 7:
+      GPIOB->DOUT31_0 = 0x0C1; // PB7, PB6, PB0
+      break;
+    case 8:
+      GPIOB->DOUT31_0 = 0x100; // PB8
+      break;
+    case 9:
+      GPIOB->DOUT31_0 = 0x101; // PB8, PB0
+      break;
+    case 10:
+      GPIOB->DOUT31_0 = 0x140; // PB8, PB6
+      break;
+    case 11:
+      GPIOB->DOUT31_0 = 0x141; // PB8, PB6, PB0
+      break;
+    case 12:
+      GPIOB->DOUT31_0 = 0x180; // PB8, PB7
+      break;
+    case 13:
+      GPIOB->DOUT31_0 = 0x181; // PB8, PB7, PB0
+      break;
+    case 14:
+      GPIOB->DOUT31_0 = 0x1C0; // PB8, PB7, PB6
+      break;
+    case 15:
+      GPIOB->DOUT31_0 = 0x1C1; // PB8, PB7, PB6, PB0
+      break;
+    }
+
+    i++;
+
+    // Simple wait
+    for (int j = 0; j < 100000; j++) {
+      __asm("NOP");
+    }
   }
 }
 // // if you have a voltmeter/scope,
@@ -81,9 +152,8 @@ int main(void){ // main1
 //   SysTick->CTRL = 0x00000005;  // enable SysTick with core clock
 //   startTime = SysTick->VAL;
 //   stopTime = SysTick->VAL;
-//   Offset = (startTime-stopTime)&0x0FFFFFF; // in bus cycles to perform time measurement
-//   ADCinit(); //ADC1 channel 5, PB18, slidepot
-//   while(1){
+//   Offset = (startTime-stopTime)&0x0FFFFFF; // in bus cycles to perform time
+//   measurement ADCinit(); //ADC1 channel 5, PB18, slidepot while(1){
 //     startTime = SysTick->VAL;
 //     Data = ADCin();  // sample ADC1 channel 5, PB18, slidepot
 //     stopTime = SysTick->VAL;
@@ -108,9 +178,8 @@ int main(void){ // main1
 //   SysTick->CTRL = 0x00000005;  // enable SysTick with core clock
 //   startTime = SysTick->VAL;
 //   stopTime = SysTick->VAL;
-//   Offset = (startTime-stopTime)&0x0FFFFFF; // in bus cycles to perform time measurement
-//   ADCinit(); //PB18 = ADC0 channel 5, slidepot
-//   while(1){
+//   Offset = (startTime-stopTime)&0x0FFFFFF; // in bus cycles to perform time
+//   measurement ADCinit(); //PB18 = ADC0 channel 5, slidepot while(1){
 //     Data = ADCin();  // sample 12-bit ADC0 channel 5, slidepot
 //     startTime = SysTick->VAL;
 //     Position = Convert(Data);
@@ -119,10 +188,10 @@ int main(void){ // main1
 //     startTime = SysTick->VAL;
 //     FloatPosition = FloatConvert(Data);
 //     stopTime = SysTick->VAL;
-//     FloatConverttime = ((startTime-stopTime)&0x0FFFFFF)-Offset; // in bus cycles
+//     FloatConverttime = ((startTime-stopTime)&0x0FFFFFF)-Offset; // in bus
+//     cycles
 //   }
 // }
-
 
 // // use main4 to test OutFix functions
 // // connect slidepot pin 2 to PB18
@@ -134,16 +203,14 @@ int main(void){ // main1
 //   __disable_irq();
 //   PLL_Init(); // set bus speed
 //   LaunchPad_Init();
-//   ST7735_InitPrintf(INITR_REDTAB); // INITR_REDTAB for AdaFruit, INITR_BLACKTAB for HiLetGo
-//   ST7735_FillScreen(ST7735_BLACK);
-//   SysTick->LOAD = 0xFFFFFF;    // max
-//   SysTick->VAL = 0;            // any write to current clears it
-//   SysTick->CTRL = 0x00000005;  // enable SysTick with core clock
+//   ST7735_InitPrintf(INITR_REDTAB); // INITR_REDTAB for AdaFruit,
+//   INITR_BLACKTAB for HiLetGo ST7735_FillScreen(ST7735_BLACK); SysTick->LOAD =
+//   0xFFFFFF;    // max SysTick->VAL = 0;            // any write to current
+//   clears it SysTick->CTRL = 0x00000005;  // enable SysTick with core clock
 //   startTime = SysTick->VAL;
 //   stopTime = SysTick->VAL;
-//   Offset = (startTime-stopTime)&0x0FFFFFF; // in bus cycles to perform time measurement
-//   ADCinit(); //PB18 = ADC0 channel 5, slidepot
-//   while(1){
+//   Offset = (startTime-stopTime)&0x0FFFFFF; // in bus cycles to perform time
+//   measurement ADCinit(); //PB18 = ADC0 channel 5, slidepot while(1){
 //     ST7735_SetCursor(0,0); // top left
 //     Data = ADCin();  // sample 12-bit ADC0 channel 5, slidepot
 //     Position = Convert(Data);
@@ -156,20 +223,21 @@ int main(void){ // main1
 //     startTime = SysTick->VAL;
 //     FloatOutFix(FloatPosition);
 //     stopTime = SysTick->VAL;
-//     FloatOutFixtime = ((startTime-stopTime)&0x0FFFFFF)-Offset; // in bus cycles
-//     Clock_Delay1ms(100);
+//     FloatOutFixtime = ((startTime-stopTime)&0x0FFFFFF)-Offset; // in bus
+//     cycles Clock_Delay1ms(100);
 //   }
 // }
 // // sampling frequency is 30 Hz
 // void TIMG12_IRQHandler(void){
 //   if((TIMG12->CPU_INT.IIDX) == 1){ // this will acknowledge
-//     GPIOB->DOUTTGL31_0 = GREEN; // toggle PB27 (minimally intrusive debugging)
-//     GPIOB->DOUTTGL31_0 = GREEN; // toggle PB27 (minimally intrusive debugging)
-//     Time++;
+//     GPIOB->DOUTTGL31_0 = GREEN; // toggle PB27 (minimally intrusive
+//     debugging) GPIOB->DOUTTGL31_0 = GREEN; // toggle PB27 (minimally
+//     intrusive debugging) Time++;
 //     // sample 12-bit ADC0 channel 5, slidepot
 //     // store data into mailbox
 //     // set the semaphore
-//     GPIOB->DOUTTGL31_0 = GREEN; // toggle PB27 (minimally intrusive debugging)
+//     GPIOB->DOUTTGL31_0 = GREEN; // toggle PB27 (minimally intrusive
+//     debugging)
 //   }
 // }
 // uint8_t TExaS_LaunchPadLogicPB27PB26(void){
@@ -183,9 +251,9 @@ int main(void){ // main1
 //   __disable_irq();
 //   PLL_Init(); // set bus speed
 //   LaunchPad_Init();
-//   ST7735_InitPrintf(INITR_REDTAB); // INITR_REDTAB for AdaFruit, INITR_BLACKTAB for HiLetGo
-//   ST7735_FillScreen(ST7735_BLACK);
-//   ADCinit(); //PB18 = ADC1 channel 5, slidepot
+//   ST7735_InitPrintf(INITR_REDTAB); // INITR_REDTAB for AdaFruit,
+//   INITR_BLACKTAB for HiLetGo ST7735_FillScreen(ST7735_BLACK); ADCinit();
+//   //PB18 = ADC1 channel 5, slidepot
 //   TExaS_Init(0,0,&TExaS_LaunchPadLogicPB27PB26); // PB27 and PB26
 //   ST7735_PlotClear(0,2000);
 //     // initialize interrupts on TimerG12 at 30 Hz
@@ -221,11 +289,9 @@ int main(void){ // main1
 //   __disable_irq();
 //   PLL_Init(); // set bus speed
 //   LaunchPad_Init();
-//   ST7735_InitPrintf(INITR_REDTAB); // INITR_REDTAB for AdaFruit, INITR_BLACKTAB for HiLetGo
-//   ST7735_FillScreen(ST7735_BLACK);
-//   ADCinit(); //PB18 = ADC1 channel 5, slidepot
-//   SAC = 1;
-//   while(1){int i; uint32_t d,sum;
+//   ST7735_InitPrintf(INITR_REDTAB); // INITR_REDTAB for AdaFruit,
+//   INITR_BLACKTAB for HiLetGo ST7735_FillScreen(ST7735_BLACK); ADCinit();
+//   //PB18 = ADC1 channel 5, slidepot SAC = 1; while(1){int i; uint32_t d,sum;
 //     sum = 0;
 //     for(int j=0; j<100; j++){
 //       sum += ADCin();  // sample 12-bit ADC0 channel 5, slidepot
@@ -263,4 +329,3 @@ int main(void){ // main1
 //     if(SAC >= 256) SAC = 1;
 //   }
 // }
-

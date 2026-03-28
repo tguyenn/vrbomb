@@ -70,12 +70,18 @@ void LaunchPad_Init(void){
   IOMUX->SECCFG.PINCM[PB22INDEX] = (uint32_t) 0x00000081;
   IOMUX->SECCFG.PINCM[PB26INDEX] = (uint32_t) 0x00000081;
   IOMUX->SECCFG.PINCM[PB27INDEX] = (uint32_t) 0x00000081;
+  IOMUX->SECCFG.PINCM[PB0INDEX] = (uint32_t) 0x00000081;
+  IOMUX->SECCFG.PINCM[PB6INDEX] = (uint32_t) 0x00000081;
+  IOMUX->SECCFG.PINCM[PB7INDEX] = (uint32_t) 0x00000081;
+  IOMUX->SECCFG.PINCM[PB8INDEX] = (uint32_t) 0x00000081;
 // DOE31_0 Data output enable
   GPIOA->DOE31_0 |= RED1;
   GPIOB->DOE31_0 |= BLUE | RED | GREEN; // enable outputs
+  GPIOB->DOE31_0 |= (1<<0) | (1<<6) | (1<<7) | (1<<8);
 // DOUT31_0 read/write data output pins
   GPIOA->DOUT31_0 &= ~RED1; // LED1 off
   GPIOB->DOUT31_0 &= ~(BLUE | RED | GREEN); // clear LED2
+  GPIOB->DOUT31_0 &= ~((1<<0) | (1<<6) | (1<<7) | (1<<8));
 }
 
 // **** LaunchPad_InS1 *****
