@@ -2704,7 +2704,7 @@
 	)
 	(rectangle
 		(start 45.72 13.97)
-		(end 101.6 96.52)
+		(end 101.6 106.68)
 		(stroke
 			(width 0)
 			(type default)
@@ -2764,7 +2764,7 @@
 	)
 	(rectangle
 		(start 102.87 49.53)
-		(end 180.34 102.87)
+		(end 180.34 106.045)
 		(stroke
 			(width 0)
 			(type default)
@@ -2773,6 +2773,18 @@
 			(type none)
 		)
 		(uuid 77200124-6fa6-4b30-a91f-66cb4f3ad239)
+	)
+	(rectangle
+		(start 58.42 107.95)
+		(end 118.745 163.83)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(fill
+			(type none)
+		)
+		(uuid 8b3828d9-b7ab-47ee-9fc6-5ef096edd9f0)
 	)
 	(rectangle
 		(start 252.73 125.73)
@@ -2872,7 +2884,7 @@
 	)
 	(text "120 uA active"
 		(exclude_from_sim no)
-		(at 110.49 101.346 0)
+		(at 109.982 104.902 0)
 		(effects
 			(font
 				(size 1.27 1.27)
@@ -2882,7 +2894,7 @@
 	)
 	(text "38.4 mA worst case scenario"
 		(exclude_from_sim no)
-		(at 60.452 95.25 0)
+		(at 60.452 105.41 0)
 		(effects
 			(font
 				(size 1.27 1.27)
@@ -2920,6 +2932,16 @@
 			)
 		)
 		(uuid "d5bd40f3-c0c1-4692-9248-8b6ce852dbfd")
+	)
+	(text "Funny LEDs"
+		(exclude_from_sim no)
+		(at 64.77 109.728 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+		)
+		(uuid "db544545-04db-4430-bbfb-649526335595")
 	)
 	(text "Sensor Array"
 		(exclude_from_sim no)
@@ -3123,7 +3145,7 @@
 	)
 	(wire
 		(pts
-			(xy 69.85 60.96) (xy 85.09 60.96)
+			(xy 69.85 67.31) (xy 85.09 67.31)
 		)
 		(stroke
 			(width 0)
@@ -3193,7 +3215,7 @@
 	)
 	(wire
 		(pts
-			(xy 69.85 68.58) (xy 92.71 68.58)
+			(xy 69.85 74.93) (xy 92.71 74.93)
 		)
 		(stroke
 			(width 0)
@@ -3223,7 +3245,7 @@
 	)
 	(wire
 		(pts
-			(xy 69.85 45.72) (xy 87.63 45.72)
+			(xy 69.85 52.07) (xy 87.63 52.07)
 		)
 		(stroke
 			(width 0)
@@ -3263,7 +3285,7 @@
 	)
 	(wire
 		(pts
-			(xy 69.85 50.8) (xy 92.71 50.8)
+			(xy 69.85 57.15) (xy 92.71 57.15)
 		)
 		(stroke
 			(width 0)
@@ -3283,7 +3305,7 @@
 	)
 	(wire
 		(pts
-			(xy 69.85 63.5) (xy 87.63 63.5)
+			(xy 69.85 69.85) (xy 87.63 69.85)
 		)
 		(stroke
 			(width 0)
@@ -3383,7 +3405,7 @@
 	)
 	(wire
 		(pts
-			(xy 69.85 66.04) (xy 90.17 66.04)
+			(xy 69.85 72.39) (xy 90.17 72.39)
 		)
 		(stroke
 			(width 0)
@@ -3403,7 +3425,7 @@
 	)
 	(wire
 		(pts
-			(xy 69.85 43.18) (xy 85.09 43.18)
+			(xy 69.85 49.53) (xy 85.09 49.53)
 		)
 		(stroke
 			(width 0)
@@ -3413,7 +3435,7 @@
 	)
 	(wire
 		(pts
-			(xy 69.85 25.4) (xy 85.09 25.4)
+			(xy 69.85 31.75) (xy 85.09 31.75)
 		)
 		(stroke
 			(width 0)
@@ -3463,7 +3485,7 @@
 	)
 	(wire
 		(pts
-			(xy 69.85 30.48) (xy 90.17 30.48)
+			(xy 69.85 36.83) (xy 90.17 36.83)
 		)
 		(stroke
 			(width 0)
@@ -3583,7 +3605,7 @@
 	)
 	(wire
 		(pts
-			(xy 69.85 33.02) (xy 92.71 33.02)
+			(xy 69.85 39.37) (xy 92.71 39.37)
 		)
 		(stroke
 			(width 0)
@@ -3663,7 +3685,7 @@
 	)
 	(wire
 		(pts
-			(xy 69.85 48.26) (xy 90.17 48.26)
+			(xy 69.85 54.61) (xy 90.17 54.61)
 		)
 		(stroke
 			(width 0)
@@ -3683,7 +3705,7 @@
 	)
 	(wire
 		(pts
-			(xy 69.85 27.94) (xy 87.63 27.94)
+			(xy 69.85 34.29) (xy 87.63 34.29)
 		)
 		(stroke
 			(width 0)
@@ -20397,7 +20419,7 @@
 		(uuid "2da42e1b-862c-407e-a4a6-10570036a366")
 	)
 	(label "CH6"
-		(at 73.66 48.26 0)
+		(at 73.66 54.61 0)
 		(effects
 			(font
 				(size 1.27 1.27)
@@ -20457,7 +20479,7 @@
 		(uuid "419cdd20-c3c8-472e-a490-1cf987d27d17")
 	)
 	(label "CH7"
-		(at 73.66 50.8 0)
+		(at 73.66 57.15 0)
 		(effects
 			(font
 				(size 1.27 1.27)
@@ -20467,7 +20489,7 @@
 		(uuid "44ef304b-4f70-466a-9658-21bc6cdb0c25")
 	)
 	(label "CH8"
-		(at 73.66 60.96 0)
+		(at 73.66 67.31 0)
 		(effects
 			(font
 				(size 1.27 1.27)
@@ -20477,7 +20499,7 @@
 		(uuid "477663fd-246e-4ceb-9a6d-26e164c835ce")
 	)
 	(label "CH4"
-		(at 73.66 43.18 0)
+		(at 73.66 49.53 0)
 		(effects
 			(font
 				(size 1.27 1.27)
@@ -20557,7 +20579,7 @@
 		(uuid "646ae500-25ea-4184-aab3-e98454a1f47b")
 	)
 	(label "CH5"
-		(at 73.66 45.72 0)
+		(at 73.66 52.07 0)
 		(effects
 			(font
 				(size 1.27 1.27)
@@ -20567,7 +20589,7 @@
 		(uuid "698532cb-78c8-4fdb-83da-05e6f3f2da8c")
 	)
 	(label "CH9"
-		(at 73.66 63.5 0)
+		(at 73.66 69.85 0)
 		(effects
 			(font
 				(size 1.27 1.27)
@@ -20637,7 +20659,7 @@
 		(uuid "9a869ee2-a625-409a-9a3a-a1fd8593eb67")
 	)
 	(label "CH11"
-		(at 73.66 68.58 0)
+		(at 73.66 74.93 0)
 		(effects
 			(font
 				(size 1.27 1.27)
@@ -20647,7 +20669,7 @@
 		(uuid "a46a1cb5-57f0-457e-9bee-2cf957f6761b")
 	)
 	(label "CH3"
-		(at 73.66 33.02 0)
+		(at 73.66 39.37 0)
 		(effects
 			(font
 				(size 1.27 1.27)
@@ -20707,7 +20729,7 @@
 		(uuid "b4b326c9-5f0c-42b1-8d6a-1165ec6a5177")
 	)
 	(label "CH10"
-		(at 73.66 66.04 0)
+		(at 73.66 72.39 0)
 		(effects
 			(font
 				(size 1.27 1.27)
@@ -20717,7 +20739,7 @@
 		(uuid "bb4493e9-4206-4407-9450-748f538324f2")
 	)
 	(label "CH2"
-		(at 73.66 30.48 0)
+		(at 73.66 36.83 0)
 		(effects
 			(font
 				(size 1.27 1.27)
@@ -20807,7 +20829,7 @@
 		(uuid "ed519ea9-619f-4ed5-9dc0-dc006d05ee1f")
 	)
 	(label "CH0"
-		(at 73.66 25.4 0)
+		(at 73.66 31.75 0)
 		(effects
 			(font
 				(size 1.27 1.27)
@@ -20817,7 +20839,7 @@
 		(uuid "f3970d1d-65ab-45b1-908a-b38edf8b5fff")
 	)
 	(label "CH1"
-		(at 73.66 27.94 0)
+		(at 73.66 34.29 0)
 		(effects
 			(font
 				(size 1.27 1.27)
@@ -20828,7 +20850,7 @@
 	)
 	(symbol
 		(lib_id "Connector:TestPoint")
-		(at 85.09 43.18 0)
+		(at 85.09 49.53 0)
 		(unit 1)
 		(exclude_from_sim no)
 		(in_bom no)
@@ -20836,7 +20858,7 @@
 		(dnp no)
 		(uuid "02fa3481-b594-45f4-8b76-d887b1ea5e1a")
 		(property "Reference" "TP105"
-			(at 83.312 35.306 0)
+			(at 83.312 41.656 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -20845,7 +20867,7 @@
 			)
 		)
 		(property "Value" "CH4"
-			(at 83.312 37.084 0)
+			(at 83.312 43.434 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -20854,7 +20876,7 @@
 			)
 		)
 		(property "Footprint" "SamacSys_Parts:bettertestpoint2"
-			(at 90.17 43.18 0)
+			(at 90.17 49.53 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -20863,7 +20885,7 @@
 			)
 		)
 		(property "Datasheet" "~"
-			(at 90.17 43.18 0)
+			(at 90.17 49.53 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -20872,7 +20894,7 @@
 			)
 		)
 		(property "Description" "test point"
-			(at 85.09 43.18 0)
+			(at 85.09 49.53 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -20881,7 +20903,7 @@
 			)
 		)
 		(property "Mouser Price/Inventory" ""
-			(at 85.09 43.18 0)
+			(at 85.09 49.53 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -22687,7 +22709,7 @@
 	)
 	(symbol
 		(lib_id "Connector:TestPoint")
-		(at 92.71 33.02 0)
+		(at 92.71 39.37 0)
 		(unit 1)
 		(exclude_from_sim no)
 		(in_bom no)
@@ -22695,7 +22717,7 @@
 		(dnp no)
 		(uuid "480f4518-a123-4792-8497-f15d71838eda")
 		(property "Reference" "TP104"
-			(at 93.726 29.718 0)
+			(at 93.726 36.068 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -22704,7 +22726,7 @@
 			)
 		)
 		(property "Value" "CH3"
-			(at 93.726 32.258 0)
+			(at 93.726 38.608 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -22713,7 +22735,7 @@
 			)
 		)
 		(property "Footprint" "SamacSys_Parts:bettertestpoint2"
-			(at 97.79 33.02 0)
+			(at 97.79 39.37 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -22722,7 +22744,7 @@
 			)
 		)
 		(property "Datasheet" "~"
-			(at 97.79 33.02 0)
+			(at 97.79 39.37 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -22731,7 +22753,7 @@
 			)
 		)
 		(property "Description" "test point"
-			(at 92.71 33.02 0)
+			(at 92.71 39.37 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -22740,7 +22762,7 @@
 			)
 		)
 		(property "Mouser Price/Inventory" ""
-			(at 92.71 33.02 0)
+			(at 92.71 39.37 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -22762,7 +22784,7 @@
 	)
 	(symbol
 		(lib_id "Connector:TestPoint")
-		(at 85.09 60.96 0)
+		(at 85.09 67.31 0)
 		(unit 1)
 		(exclude_from_sim no)
 		(in_bom no)
@@ -22770,7 +22792,7 @@
 		(dnp no)
 		(uuid "4f4689da-c2bf-4d4a-9239-63233ece5487")
 		(property "Reference" "TP109"
-			(at 83.312 53.086 0)
+			(at 83.312 59.436 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -22779,7 +22801,7 @@
 			)
 		)
 		(property "Value" "CH8"
-			(at 83.312 54.864 0)
+			(at 83.312 61.214 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -22788,7 +22810,7 @@
 			)
 		)
 		(property "Footprint" "SamacSys_Parts:bettertestpoint2"
-			(at 90.17 60.96 0)
+			(at 90.17 67.31 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -22797,7 +22819,7 @@
 			)
 		)
 		(property "Datasheet" "~"
-			(at 90.17 60.96 0)
+			(at 90.17 67.31 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -22806,7 +22828,7 @@
 			)
 		)
 		(property "Description" "test point"
-			(at 85.09 60.96 0)
+			(at 85.09 67.31 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -22815,7 +22837,7 @@
 			)
 		)
 		(property "Mouser Price/Inventory" ""
-			(at 85.09 60.96 0)
+			(at 85.09 67.31 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -22837,7 +22859,7 @@
 	)
 	(symbol
 		(lib_id "Connector:TestPoint")
-		(at 87.63 63.5 0)
+		(at 87.63 69.85 0)
 		(unit 1)
 		(exclude_from_sim no)
 		(in_bom no)
@@ -22845,7 +22867,7 @@
 		(dnp no)
 		(uuid "52024268-b0c8-4ecd-9e8e-470dbd5ec1a0")
 		(property "Reference" "TP110"
-			(at 87.63 55.626 0)
+			(at 87.63 61.976 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -22854,7 +22876,7 @@
 			)
 		)
 		(property "Value" "CH9"
-			(at 87.63 58.166 0)
+			(at 87.63 64.516 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -22863,7 +22885,7 @@
 			)
 		)
 		(property "Footprint" "SamacSys_Parts:bettertestpoint2"
-			(at 92.71 63.5 0)
+			(at 92.71 69.85 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -22872,7 +22894,7 @@
 			)
 		)
 		(property "Datasheet" "~"
-			(at 92.71 63.5 0)
+			(at 92.71 69.85 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -22881,7 +22903,7 @@
 			)
 		)
 		(property "Description" "test point"
-			(at 87.63 63.5 0)
+			(at 87.63 69.85 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -22890,7 +22912,7 @@
 			)
 		)
 		(property "Mouser Price/Inventory" ""
-			(at 87.63 63.5 0)
+			(at 87.63 69.85 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -23900,7 +23922,7 @@
 	)
 	(symbol
 		(lib_id "Connector:TestPoint")
-		(at 92.71 50.8 0)
+		(at 92.71 57.15 0)
 		(unit 1)
 		(exclude_from_sim no)
 		(in_bom no)
@@ -23908,7 +23930,7 @@
 		(dnp no)
 		(uuid "82a1baaa-ac44-47b1-83a2-dd3f25e99d71")
 		(property "Reference" "TP108"
-			(at 93.726 47.498 0)
+			(at 93.726 53.848 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -23917,7 +23939,7 @@
 			)
 		)
 		(property "Value" "CH7"
-			(at 93.726 50.038 0)
+			(at 93.726 56.388 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -23926,7 +23948,7 @@
 			)
 		)
 		(property "Footprint" "SamacSys_Parts:bettertestpoint2"
-			(at 97.79 50.8 0)
+			(at 97.79 57.15 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -23935,7 +23957,7 @@
 			)
 		)
 		(property "Datasheet" "~"
-			(at 97.79 50.8 0)
+			(at 97.79 57.15 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -23944,7 +23966,7 @@
 			)
 		)
 		(property "Description" "test point"
-			(at 92.71 50.8 0)
+			(at 92.71 57.15 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -23953,7 +23975,7 @@
 			)
 		)
 		(property "Mouser Price/Inventory" ""
-			(at 92.71 50.8 0)
+			(at 92.71 57.15 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -24403,7 +24425,7 @@
 	)
 	(symbol
 		(lib_id "Connector:TestPoint")
-		(at 90.17 66.04 0)
+		(at 90.17 72.39 0)
 		(unit 1)
 		(exclude_from_sim no)
 		(in_bom no)
@@ -24411,7 +24433,7 @@
 		(dnp no)
 		(uuid "a79bafb9-a274-48a4-9956-9f228056fed4")
 		(property "Reference" "TP111"
-			(at 91.44 59.69 0)
+			(at 91.44 66.04 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -24420,7 +24442,7 @@
 			)
 		)
 		(property "Value" "CH10"
-			(at 91.44 62.23 0)
+			(at 91.44 68.58 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -24429,7 +24451,7 @@
 			)
 		)
 		(property "Footprint" "SamacSys_Parts:bettertestpoint2"
-			(at 95.25 66.04 0)
+			(at 95.25 72.39 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -24438,7 +24460,7 @@
 			)
 		)
 		(property "Datasheet" "~"
-			(at 95.25 66.04 0)
+			(at 95.25 72.39 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -24447,7 +24469,7 @@
 			)
 		)
 		(property "Description" "test point"
-			(at 90.17 66.04 0)
+			(at 90.17 72.39 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -24456,7 +24478,7 @@
 			)
 		)
 		(property "Mouser Price/Inventory" ""
-			(at 90.17 66.04 0)
+			(at 90.17 72.39 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -24709,7 +24731,7 @@
 	)
 	(symbol
 		(lib_id "Connector:TestPoint")
-		(at 90.17 30.48 0)
+		(at 90.17 36.83 0)
 		(unit 1)
 		(exclude_from_sim no)
 		(in_bom no)
@@ -24717,7 +24739,7 @@
 		(dnp no)
 		(uuid "c5b728e2-079b-49cd-96d4-8fe3ba498a13")
 		(property "Reference" "TP103"
-			(at 91.44 24.13 0)
+			(at 91.44 30.48 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -24726,7 +24748,7 @@
 			)
 		)
 		(property "Value" "CH2"
-			(at 91.44 26.67 0)
+			(at 91.44 33.02 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -24735,7 +24757,7 @@
 			)
 		)
 		(property "Footprint" "SamacSys_Parts:bettertestpoint2"
-			(at 95.25 30.48 0)
+			(at 95.25 36.83 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -24744,7 +24766,7 @@
 			)
 		)
 		(property "Datasheet" "~"
-			(at 95.25 30.48 0)
+			(at 95.25 36.83 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -24753,7 +24775,7 @@
 			)
 		)
 		(property "Description" "test point"
-			(at 90.17 30.48 0)
+			(at 90.17 36.83 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -24762,7 +24784,7 @@
 			)
 		)
 		(property "Mouser Price/Inventory" ""
-			(at 90.17 30.48 0)
+			(at 90.17 36.83 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -24784,7 +24806,7 @@
 	)
 	(symbol
 		(lib_id "Connector:TestPoint")
-		(at 90.17 48.26 0)
+		(at 90.17 54.61 0)
 		(unit 1)
 		(exclude_from_sim no)
 		(in_bom no)
@@ -24792,7 +24814,7 @@
 		(dnp no)
 		(uuid "c70677d6-bbac-469f-9fe8-76dd397e3bad")
 		(property "Reference" "TP107"
-			(at 91.44 41.91 0)
+			(at 91.44 48.26 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -24801,7 +24823,7 @@
 			)
 		)
 		(property "Value" "CH6"
-			(at 91.44 44.45 0)
+			(at 91.44 50.8 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -24810,7 +24832,7 @@
 			)
 		)
 		(property "Footprint" "SamacSys_Parts:bettertestpoint2"
-			(at 95.25 48.26 0)
+			(at 95.25 54.61 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -24819,7 +24841,7 @@
 			)
 		)
 		(property "Datasheet" "~"
-			(at 95.25 48.26 0)
+			(at 95.25 54.61 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -24828,7 +24850,7 @@
 			)
 		)
 		(property "Description" "test point"
-			(at 90.17 48.26 0)
+			(at 90.17 54.61 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -24837,7 +24859,7 @@
 			)
 		)
 		(property "Mouser Price/Inventory" ""
-			(at 90.17 48.26 0)
+			(at 90.17 54.61 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -24859,7 +24881,7 @@
 	)
 	(symbol
 		(lib_id "Connector:TestPoint")
-		(at 92.71 68.58 0)
+		(at 92.71 74.93 0)
 		(unit 1)
 		(exclude_from_sim no)
 		(in_bom no)
@@ -24867,7 +24889,7 @@
 		(dnp no)
 		(uuid "c72d4bb7-8251-49b9-ab4c-dd37ab2bb596")
 		(property "Reference" "TP112"
-			(at 93.726 65.278 0)
+			(at 93.726 71.628 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -24876,7 +24898,7 @@
 			)
 		)
 		(property "Value" "CH11"
-			(at 93.726 67.818 0)
+			(at 93.726 74.168 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -24885,7 +24907,7 @@
 			)
 		)
 		(property "Footprint" "SamacSys_Parts:bettertestpoint2"
-			(at 97.79 68.58 0)
+			(at 97.79 74.93 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -24894,7 +24916,7 @@
 			)
 		)
 		(property "Datasheet" "~"
-			(at 97.79 68.58 0)
+			(at 97.79 74.93 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -24903,7 +24925,7 @@
 			)
 		)
 		(property "Description" "test point"
-			(at 92.71 68.58 0)
+			(at 92.71 74.93 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -24912,7 +24934,7 @@
 			)
 		)
 		(property "Mouser Price/Inventory" ""
-			(at 92.71 68.58 0)
+			(at 92.71 74.93 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -25308,7 +25330,7 @@
 	)
 	(symbol
 		(lib_id "Connector:TestPoint")
-		(at 87.63 27.94 0)
+		(at 87.63 34.29 0)
 		(unit 1)
 		(exclude_from_sim no)
 		(in_bom no)
@@ -25316,7 +25338,7 @@
 		(dnp no)
 		(uuid "e2bdd2a4-8faa-49f8-90a3-d9e6b6d9081f")
 		(property "Reference" "TP101"
-			(at 87.63 20.066 0)
+			(at 87.63 26.416 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -25325,7 +25347,7 @@
 			)
 		)
 		(property "Value" "CH1"
-			(at 87.63 22.606 0)
+			(at 87.63 28.956 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -25334,7 +25356,7 @@
 			)
 		)
 		(property "Footprint" "SamacSys_Parts:bettertestpoint2"
-			(at 92.71 27.94 0)
+			(at 92.71 34.29 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -25343,7 +25365,7 @@
 			)
 		)
 		(property "Datasheet" "~"
-			(at 92.71 27.94 0)
+			(at 92.71 34.29 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -25352,7 +25374,7 @@
 			)
 		)
 		(property "Description" "test point"
-			(at 87.63 27.94 0)
+			(at 87.63 34.29 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -25361,7 +25383,7 @@
 			)
 		)
 		(property "Mouser Price/Inventory" ""
-			(at 87.63 27.94 0)
+			(at 87.63 34.29 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -25383,7 +25405,7 @@
 	)
 	(symbol
 		(lib_id "Connector:TestPoint")
-		(at 85.09 25.4 0)
+		(at 85.09 31.75 0)
 		(unit 1)
 		(exclude_from_sim no)
 		(in_bom no)
@@ -25391,7 +25413,7 @@
 		(dnp no)
 		(uuid "e3572fc8-e387-4828-bc08-d2a58900ba27")
 		(property "Reference" "TP100"
-			(at 83.312 16.764 0)
+			(at 83.312 23.114 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -25400,7 +25422,7 @@
 			)
 		)
 		(property "Value" "CH0"
-			(at 83.312 19.304 0)
+			(at 83.312 25.654 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -25409,7 +25431,7 @@
 			)
 		)
 		(property "Footprint" "SamacSys_Parts:bettertestpoint2"
-			(at 90.17 25.4 0)
+			(at 90.17 31.75 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -25418,7 +25440,7 @@
 			)
 		)
 		(property "Datasheet" "~"
-			(at 90.17 25.4 0)
+			(at 90.17 31.75 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -25427,7 +25449,7 @@
 			)
 		)
 		(property "Description" "test point"
-			(at 85.09 25.4 0)
+			(at 85.09 31.75 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -25436,7 +25458,7 @@
 			)
 		)
 		(property "Mouser Price/Inventory" ""
-			(at 85.09 25.4 0)
+			(at 85.09 31.75 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -25798,7 +25820,7 @@
 	)
 	(symbol
 		(lib_id "Connector:TestPoint")
-		(at 87.63 45.72 0)
+		(at 87.63 52.07 0)
 		(unit 1)
 		(exclude_from_sim no)
 		(in_bom no)
@@ -25806,7 +25828,7 @@
 		(dnp no)
 		(uuid "f1bd6ae6-ffc7-46ed-8a57-91c1c03d1a73")
 		(property "Reference" "TP106"
-			(at 87.63 37.846 0)
+			(at 87.63 44.196 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -25815,7 +25837,7 @@
 			)
 		)
 		(property "Value" "CH5"
-			(at 87.63 40.386 0)
+			(at 87.63 46.736 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -25824,7 +25846,7 @@
 			)
 		)
 		(property "Footprint" "SamacSys_Parts:bettertestpoint2"
-			(at 92.71 45.72 0)
+			(at 92.71 52.07 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -25833,7 +25855,7 @@
 			)
 		)
 		(property "Datasheet" "~"
-			(at 92.71 45.72 0)
+			(at 92.71 52.07 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -25842,7 +25864,7 @@
 			)
 		)
 		(property "Description" "test point"
-			(at 87.63 45.72 0)
+			(at 87.63 52.07 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -25851,7 +25873,7 @@
 			)
 		)
 		(property "Mouser Price/Inventory" ""
-			(at 87.63 45.72 0)
+			(at 87.63 52.07 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -26091,7 +26113,7 @@
 		)
 	)
 	(sheet
-		(at 50.8 20.32)
+		(at 50.8 26.67)
 		(size 19.05 60.96)
 		(exclude_from_sim no)
 		(in_bom yes)
@@ -26107,7 +26129,7 @@
 		)
 		(uuid "72479d84-48b0-4d28-b639-95db8cc5314b")
 		(property "Sheetname" "HALL_ARR"
-			(at 50.8 19.6084 0)
+			(at 50.8 25.9584 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -26116,7 +26138,7 @@
 			)
 		)
 		(property "Sheetfile" "hall_arr.kicad_sch"
-			(at 50.8 81.8646 0)
+			(at 50.8 88.2146 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -26125,7 +26147,7 @@
 			)
 		)
 		(pin "CH0" input
-			(at 69.85 25.4 0)
+			(at 69.85 31.75 0)
 			(uuid "3aa267b5-7bed-4caf-b83f-55ede465ca0a")
 			(effects
 				(font
@@ -26135,7 +26157,7 @@
 			)
 		)
 		(pin "CH1" input
-			(at 69.85 27.94 0)
+			(at 69.85 34.29 0)
 			(uuid "33431e0a-c891-4dbd-9591-74db44c49b9a")
 			(effects
 				(font
@@ -26145,7 +26167,7 @@
 			)
 		)
 		(pin "CH2" input
-			(at 69.85 30.48 0)
+			(at 69.85 36.83 0)
 			(uuid "b37c17d6-ca18-4fd7-acb8-05e115658f75")
 			(effects
 				(font
@@ -26155,7 +26177,7 @@
 			)
 		)
 		(pin "CH3" input
-			(at 69.85 33.02 0)
+			(at 69.85 39.37 0)
 			(uuid "4916dfd3-42ac-4279-b8ab-14e4c9332f95")
 			(effects
 				(font
@@ -26165,7 +26187,7 @@
 			)
 		)
 		(pin "CH4" input
-			(at 69.85 43.18 0)
+			(at 69.85 49.53 0)
 			(uuid "2f83e202-fcb7-473d-b32a-6ef903c8e7e7")
 			(effects
 				(font
@@ -26175,7 +26197,7 @@
 			)
 		)
 		(pin "CH5" input
-			(at 69.85 45.72 0)
+			(at 69.85 52.07 0)
 			(uuid "a291826c-bbd9-465e-bf80-adfffbd58735")
 			(effects
 				(font
@@ -26185,7 +26207,7 @@
 			)
 		)
 		(pin "CH6" input
-			(at 69.85 48.26 0)
+			(at 69.85 54.61 0)
 			(uuid "b410f50d-f549-430f-8a51-f16b95f9489e")
 			(effects
 				(font
@@ -26195,7 +26217,7 @@
 			)
 		)
 		(pin "CH7" input
-			(at 69.85 50.8 0)
+			(at 69.85 57.15 0)
 			(uuid "97f51610-83f1-4b8a-8c9f-34fa4e66b0f2")
 			(effects
 				(font
@@ -26205,7 +26227,7 @@
 			)
 		)
 		(pin "CH8" input
-			(at 69.85 60.96 0)
+			(at 69.85 67.31 0)
 			(uuid "5929d630-fc83-47fd-8267-161a82580f9d")
 			(effects
 				(font
@@ -26215,7 +26237,7 @@
 			)
 		)
 		(pin "CH9" input
-			(at 69.85 63.5 0)
+			(at 69.85 69.85 0)
 			(uuid "4716bbc3-cefd-4049-95b9-6f424deab14a")
 			(effects
 				(font
@@ -26225,7 +26247,7 @@
 			)
 		)
 		(pin "CH10" input
-			(at 69.85 66.04 0)
+			(at 69.85 72.39 0)
 			(uuid "af88d687-c0fe-465b-8507-57458601909d")
 			(effects
 				(font
@@ -26235,7 +26257,7 @@
 			)
 		)
 		(pin "CH11" input
-			(at 69.85 68.58 0)
+			(at 69.85 74.93 0)
 			(uuid "06a591f2-3c90-41c3-be39-8554d3c7de3c")
 			(effects
 				(font
