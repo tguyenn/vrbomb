@@ -90,4 +90,22 @@ K
 F http://www.ti.com/lit/gpn/sn74ahct125
 $ENDCMP
 #
+$CMP NX3020NAK-QR
+D 30 V, N-channel Trench MOSFET
+K
+F https://assets.nexperia.com/documents/data-sheet/NX3020NAK.pdf
+$ENDCMP
+#
+$CMP SN74LV1T34DBVR
+D Single Power Supply BUFFER Logic Level Shifter (no enable)
+K
+F http://www.ti.com/lit/gpn/sn74lv1t34
+$ENDCMP
+#
+$CMP LM321LVIDBVR
+D 1-Channel Industry Standard Low Voltage Operational Amplifier
+K
+F http://www.ti.com/lit/gpn/lm321lv
+$ENDCMP
+#
 #End Doc Library

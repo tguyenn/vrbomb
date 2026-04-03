@@ -4859,7 +4859,7 @@
 		(uuid "0dbd0af2-0e32-4da1-9d8d-462a3cbcb091")
 	)
 	(label "UART0_CHIP_RX"
-		(at 85.09 110.49 180)
+		(at 85.09 115.57 180)
 		(effects
 			(font
 				(size 1.27 1.27)
@@ -5539,7 +5539,7 @@
 		(uuid "d4807b63-cc86-4267-85d5-5d94139bc5fe")
 	)
 	(label "UART0_CHIP_TX"
-		(at 85.09 115.57 180)
+		(at 85.09 110.49 180)
 		(effects
 			(font
 				(size 1.27 1.27)
@@ -6126,7 +6126,7 @@
 				(hide yes)
 			)
 		)
-		(property "Mouser Price/Stock" "https://www.mouser.co.uk/ProductDetail/ams-OSRAM/LS-R976-NR-1?qs=K5ta8V%252BWhtZhvCAe1sTZFg%3D%3D"
+		(property "Mouser Price/Stock" "https://www.mouser.com/ProductDetail/ams-OSRAM/LS-R976-NR-1?qs=K5ta8V%252BWhtZhvCAe1sTZFg%3D%3D"
 			(at 41.91 721.92 0)
 			(effects
 				(font
@@ -6580,7 +6580,7 @@
 		(at 128.27 106.68 0)
 		(unit 1)
 		(exclude_from_sim no)
-		(in_bom yes)
+		(in_bom no)
 		(on_board yes)
 		(dnp no)
 		(uuid "497c7919-7409-46b2-9a71-89752523aeb7")
@@ -6593,7 +6593,7 @@
 				(justify left)
 			)
 		)
-		(property "Value" "PA9"
+		(property "Value" "LP.PA9"
 			(at 129.794 106.172 0)
 			(effects
 				(font
@@ -6602,7 +6602,7 @@
 				(justify left)
 			)
 		)
-		(property "Footprint" "SamacSys_Parts:betterTestPoint_Pad_1.5x1.5mm"
+		(property "Footprint" "SamacSys_Parts:bettertestpoint2"
 			(at 133.35 106.68 0)
 			(effects
 				(font
@@ -6935,7 +6935,7 @@
 		(at 165.1 104.14 0)
 		(unit 1)
 		(exclude_from_sim no)
-		(in_bom yes)
+		(in_bom no)
 		(on_board yes)
 		(dnp no)
 		(uuid "6b25f889-4ee7-47d7-b426-404c0ad54a13")
@@ -7074,7 +7074,7 @@
 		(at 72.39 156.21 0)
 		(unit 1)
 		(exclude_from_sim no)
-		(in_bom yes)
+		(in_bom no)
 		(on_board yes)
 		(dnp no)
 		(uuid "7502a5b8-647f-40b4-8a1a-2225dc33b802")
@@ -7087,7 +7087,7 @@
 				(justify left)
 			)
 		)
-		(property "Value" "PA8"
+		(property "Value" "LP.PA8"
 			(at 65.024 155.956 0)
 			(effects
 				(font
@@ -7096,7 +7096,7 @@
 				(justify left)
 			)
 		)
-		(property "Footprint" "SamacSys_Parts:betterTestPoint_Pad_1.5x1.5mm"
+		(property "Footprint" "SamacSys_Parts:bettertestpoint2"
 			(at 77.47 156.21 0)
 			(effects
 				(font
@@ -7154,7 +7154,7 @@
 				(justify left)
 			)
 		)
-		(property "Value" "PWR_LED"
+		(property "Value" "3V3_PWR"
 			(at 43.18 131.1274 0)
 			(effects
 				(font
@@ -7212,7 +7212,7 @@
 				(hide yes)
 			)
 		)
-		(property "Mouser Price/Stock" "https://www.mouser.co.uk/ProductDetail/ams-OSRAM/LS-R976-NR-1?qs=K5ta8V%252BWhtZhvCAe1sTZFg%3D%3D"
+		(property "Mouser Price/Stock" "https://www.mouser.com/ProductDetail/ams-OSRAM/LS-R976-NR-1?qs=K5ta8V%252BWhtZhvCAe1sTZFg%3D%3D"
 			(at 53.34 721.92 0)
 			(effects
 				(font
@@ -7864,7 +7864,7 @@
 		(at 241.3 35.56 180)
 		(unit 1)
 		(exclude_from_sim no)
-		(in_bom yes)
+		(in_bom no)
 		(on_board yes)
 		(dnp no)
 		(fields_autoplaced yes)
@@ -8308,7 +8308,7 @@
 		(at 214.63 57.15 0)
 		(unit 1)
 		(exclude_from_sim no)
-		(in_bom yes)
+		(in_bom no)
 		(on_board yes)
 		(dnp no)
 		(uuid "e590a39b-c244-4be0-b025-c0eef4479dca")
